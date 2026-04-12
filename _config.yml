@@ -18,9 +18,9 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Molly Hydorn
+title: Molly Hydorn, Ph.D.
 email: mollyhydorn@gmail.com
-author: Molly Hydorn
+author: Molly Hydorn, Ph.D.
 description: >-
   Ecosystem mapping and partnership development in regenerative agriculture.
 baseurl: "" # the subpath of your site, e.g. /blog

@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Molly Hydorn
+title: Molly Hydorn, Ph.D.
 permalink: /
 ---
 
