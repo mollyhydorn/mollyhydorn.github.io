@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regenerative Agriculture Landscape — Data</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f7f5f1;
+  --surface: #ffffff;
+  --ink: #1c1c18;
+  --ink-mid: #4a4a42;
+  --ink-muted: #7a7a6e;
+  --ink-faint: #b4b4a8;
+  --border: #e0ddd4;
+  --accent: #3d6b4f;
+  --accent2: #8b5e3c;
+  --accent3: #3a5a72;
+  --accent4: #a07c3a;
+  --warm: #c8b89a;
+
+  --c1: #5a8a6a;  /* green */
+  --c2: #3a5a72;  /* blue */
+  --c3: #8b5e3c;  /* brown */
+  --c4: #a07c3a;  /* gold */
+  --c5: #6b5a8b;  /* purple */
+  --c6: #5a7a72;  /* teal */
+  --c7: #7a6a5a;  /* warm gray */
+  --c8: #8a6a3a;  /* amber */
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+/* PAGE LAYOUT */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 64px 32px 120px;
+}
+
+/* HEADER */
+.page-header {
+  margin-bottom: 72px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 40px;
+}
+
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  display: block;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+
+.page-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.page-intro {
+  font-size: 15px;
+  color: var(--ink-mid);
+  max-width: 580px;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.stat-row {
+  display: flex;
+  gap: 40px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-number {
+  font-family: 'Lora', serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* SECTION */
+.section {
+  margin-bottom: 80px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-header {
+  margin-bottom: 28px;
+}
+
+.section-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-family: 'Lora', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.section-insight {
+  font-size: 13.5px;
+  color: var(--ink-muted);
+  max-width: 540px;
+  line-height: 1.65;
+}
+
+.section-insight strong {
+  color: var(--ink-mid);
+  font-weight: 500;
+}
+
+/* CHART CONTAINER */
+.chart-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 32px;
+  margin-top: 20px;
+}
+
+/* CERTIFICATION SPLIT */
+.cert-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.cert-donut {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.cert-donut svg { width: 100%; height: 100%; }
+
+.donut-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.donut-pct {
+  font-family: 'Lora', serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+  display: block;
+}
+
+.donut-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  display: block;
+  margin-top: 4px;
+}
+
+.cert-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.legend-text {}
+.legend-val {
+  font-family: 'Lora', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+.legend-desc {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* HORIZONTAL BAR CHART */
+.bar-chart { display: flex; flex-direction: column; gap: 10px; }
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 50px;
+  align-items: center;
+  gap: 12px;
+}
+
+.bar-label {
+  font-size: 12px;
+  color: var(--ink-mid);
+  text-align: right;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-track {
+  background: var(--bg);
+  border-radius: 2px;
+  height: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bar-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+/* STATE MAP */
+#state-chart {
+  width: 100%;
+  height: 300px;
+}
+
+/* INVESTOR SPLIT */
+.investor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* BRAND CERTS */
+.brand-cert-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.brand-cert-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.brand-cert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.brand-cert-name {
+  font-size: 13px;
+  color: var(--ink-mid);
+  font-weight: 400;
+}
+
+.brand-cert-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+.brand-cert-bar {
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.brand-cert-fill {
+  height: 100%;
+  border-radius: 3px;
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brand-cert-note {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  font-style: italic;
+  line-height: 1.6;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+/* PRODUCT TREEMAP */
+#product-chart { width: 100%; height: 260px; }
+
+/* FOOTNOTE */
+.footnote {
+  margin-top: 80px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  font-family: 'DM Mono', monospace;
+  line-height: 1.7;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .cert-split, .investor-grid { grid-template-columns: 1fr; }
+  .bar-row { grid-template-columns: 100px 1fr 40px; }
+  .stat-row { gap: 24px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <span class="eyebrow">Landscape Analysis · WhyRegen Database</span>
+    <h1 class="page-title">The Regenerative Agriculture Ecosystem<br>is <em>Vast, Livestock-Heavy,</em><br>and Largely Uncredentialed</h1>
+    <p class="page-intro">A data-driven portrait of 3,000+ organizations mapped across farms, investors, brands, and technology companies operating in or adjacent to regenerative agriculture in the United States.</p>
+    <div class="stat-row">
+      <div class="stat-item">
+        <span class="stat-number">2,459</span>
+        <span class="stat-label">Farms & producers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">151</span>
+        <span class="stat-label">Investors & funders</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">231</span>
+        <span class="stat-label">Brands & buyers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">75</span>
+        <span class="stat-label">Technology companies</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECTION 1: CERTIFICATION GAP -->
+  <section class="section" id="s1">
+    <div class="section-header">
+      <span class="section-num">01 — Certification</span>
+      <h2 class="section-title">Most farms in the ecosystem carry no formal certification</h2>
+      <p class="section-insight">Only <strong>11.5% of mapped farms</strong> hold a recognized regenerative or organic certification. The remaining 88.5% operate without third-party verification — a structural gap that limits access to premium markets, carbon programs, and mission-aligned capital.</p>
+    </div>
+    <div class="chart-wrap">
+      <div class="cert-split">
+        <div class="cert-donut">
+          <svg id="donut-svg" viewBox="0 0 200 200"></svg>
+          <div class="donut-label">
+            <span class="donut-pct">88.5%</span>
+            <span class="donut-sub">uncertified</span>
+          </div>
+        </div>
+        <div class="cert-legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#c8bfaa"></div>
+            <div class="legend-text">
+              <div class="legend-val">2,176</div>
+              <div class="legend-desc">Farms with no certification on record — self-identified regenerative or transitioning</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--accent)"></div>
+            <div class="legend-text">
+              <div class="legend-val">283</div>
+              <div class="legend-desc">Farms holding at least one recognized certification (ROC, Regenified, USDA Organic, AGA, Savory EOV, or Real Organic)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: GEOGRAPHY -->
+  <section class="section" id="s2">
+    <div class="section-header">
+      <span class="section-num">02 — Geography</span>
+      <h2 class="section-title">Production is distributed; capital is not</h2>
+      <p class="section-insight">Farm activity is spread across the country with Texas, California, Pennsylvania, and New York leading in count. <strong>Investor headquarters, however, cluster tightly</strong> in Colorado (29), New York (23), and California (16) — suggesting a geographic mismatch between where regenerative production happens and where the capital to support it lives.</p>
+    </div>
+    <div class="chart-wrap">
+      <div class="bar-chart" id="state-bars"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: PRODUCTS -->
+  <section class="section" id="s3">
+    <div class="section-header">
+      <span class="section-num">03 — Products</span>
+      <h2 class="section-title">Regenerative agriculture, in practice, is predominantly livestock</h2>
+      <p class="section-insight">Beef appears in <strong>over 61% of all farm product listings</strong> in the database. When combined with other animal products — chicken, pork, eggs, lamb, and dairy — livestock dominates the landscape. This reflects both the historical alignment between holistic grazing practices and the regenerative label, and a relative underrepresentation of row crops and perennial systems.</p>
+    </div>
+    <div class="chart-wrap">
+      <div class="bar-chart" id="product-bars"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: INVESTORS -->
+  <section class="section" id="s4">
+    <div class="section-header">
+      <span class="section-num">04 — Capital</span>
+      <h2 class="section-title">Venture and impact funds lead, but the capital stack has gaps</h2>
+      <p class="section-insight">Venture (47) and impact funds (37) make up the majority of mapped investors. <strong>Credit and lending vehicles are notably thin</strong> at just 11 — a meaningful gap given that most farm-level transitions require patient debt, not equity. Real asset and farmland-focused investors, though fewer in number, often represent larger pools of deployed capital.</p>
+    </div>
+    <div class="chart-wrap">
+      <div class="bar-chart" id="investor-bars"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: BRANDS -->
+  <section class="section" id="s5">
+    <div class="section-header">
+      <span class="section-num">05 — Brands & Certification Standards</span>
+      <h2 class="section-title">Brand certification is concentrated in ROC — but the standards vary significantly</h2>
+      <p class="section-insight">ROC (Regenerative Organic Certified) accounts for <strong>61% of brand certifications</strong>, followed by Rainforest Alliance (20%) and Regenified (17%). These are philosophically distinct standards — ROC integrates soil health, animal welfare, and worker equity; Rainforest Alliance emphasizes supply chain sustainability; Regenified focuses on measurable soil outcomes. Their co-presence under the "regenerative" label reflects an ecosystem still negotiating what the term means.</p>
+    </div>
+    <div class="chart-wrap">
+      <div class="brand-cert-wrap" id="brand-cert-bars"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: TECH -->
+  <section class="section" id="s6">
+    <div class="section-header">
+      <span class="section-num">06 — Technology</span>
+      <h2 class="section-title">The AgTech supporting regenerative is mostly early-stage</h2>
+      <p class="section-insight">Of 75 mapped technology companies, <strong>seed and pre-seed stage companies account for the largest share</strong>. A meaningful cluster are nonprofits or grant-funded — reflecting the public-good nature of tools like soil carbon measurement, verification infrastructure, and open-source farm management software. A handful of companies have reached Series B and beyond, signaling emerging market leaders.</p>
+    </div>
+    <div class="chart-wrap">
+      <div class="bar-chart" id="tech-bars"></div>
+    </div>
+  </section>
+
+  <div class="footnote">
+    Data compiled from the WhyRegen landscape database. Farm count: 2,459 · Investor count: 151 · Brand count: 231 · Technology count: 75.<br>
+    Certification data reflects records available at time of mapping; a significant share of farms may hold certifications not captured here.<br>
+    Methodology: organizations were sourced from certification registries, industry directories, event attendance, and primary research.
+  </div>
+
+</div>
+
+<script>
+// ── INTERSECTION OBSERVER for scroll-in ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+// ── COLORS ──
+const COLORS = ['#5a8a6a','#3a5a72','#8b5e3c','#a07c3a','#6b5a8b','#5a7a72','#7a6a5a','#8a6a3a'];
+
+// ── 1. DONUT CHART ──
+(function() {
+  const svg = d3.select('#donut-svg');
+  const w = 200, h = 200, r = 88, inner = 60;
+  const g = svg.append('g').attr('transform', `translate(${w/2},${h/2})`);
+
+  const data = [
+    { label: 'Uncertified', value: 2176, color: '#ddd8cc' },
+    { label: 'Certified',   value: 283,  color: '#3d6b4f' }
+  ];
+
+  const pie = d3.pie().value(d => d.value).sort(null).padAngle(0.025);
+  const arc = d3.arc().innerRadius(inner).outerRadius(r).cornerRadius(3);
+
+  const arcs = g.selectAll('path').data(pie(data)).join('path')
+    .attr('fill', d => d.data.color)
+    .attr('d', arc)
+    .style('opacity', 0)
+    .transition().delay((d,i) => i * 200).duration(700)
+    .style('opacity', 1);
+})();
+
+// ── HORIZONTAL BAR HELPER ──
+function makeBarChart(containerId, data, colorFn, maxVal) {
+  const container = document.getElementById(containerId);
+  const max = maxVal || Math.max(...data.map(d => d.value));
+
+  data.forEach((d, i) => {
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+
+    const label = document.createElement('div');
+    label.className = 'bar-label';
+    label.textContent = d.label;
+
+    const track = document.createElement('div');
+    track.className = 'bar-track';
+
+    const fill = document.createElement('div');
+    fill.className = 'bar-fill';
+    fill.style.background = typeof colorFn === 'function' ? colorFn(i) : colorFn;
+    fill.style.transitionDelay = `${i * 60}ms`;
+    track.appendChild(fill);
+
+    const val = document.createElement('div');
+    val.className = 'bar-val';
+    val.textContent = d.value.toLocaleString();
+
+    row.appendChild(label);
+    row.appendChild(track);
+    row.appendChild(val);
+    container.appendChild(row);
+
+    // Animate when visible
+    setTimeout(() => {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            fill.style.width = `${(d.value / max) * 100}%`;
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      obs.observe(row);
+    }, 100);
+  });
+}
+
+// ── 2. STATE BARS ──
+makeBarChart('state-bars', [
+  { label: 'Texas',        value: 141 },
+  { label: 'California',   value: 133 },
+  { label: 'Pennsylvania', value: 106 },
+  { label: 'New York',     value: 101 },
+  { label: 'Virginia',     value: 90  },
+  { label: 'Wisconsin',    value: 83  },
+  { label: 'Washington',   value: 73  },
+  { label: 'Ohio',         value: 72  },
+  { label: 'Missouri',     value: 67  },
+  { label: 'Colorado',     value: 64  },
+  { label: 'Oregon',       value: 63  },
+  { label: 'Illinois',     value: 57  },
+], i => d3.interpolateRgb('#c8dfd0', '#2d5c3f')(i / 11));
+
+// ── 3. PRODUCT BARS ──
+makeBarChart('product-bars', [
+  { label: 'Beef',       value: 1510 },
+  { label: 'Chicken',    value: 696  },
+  { label: 'Pork',       value: 654  },
+  { label: 'Eggs',       value: 583  },
+  { label: 'Lamb',       value: 492  },
+  { label: 'Turkey',     value: 319  },
+  { label: 'Vegetables', value: 182  },
+  { label: 'Dairy',      value: 179  },
+  { label: 'Goat',       value: 105  },
+  { label: 'Cheese',     value: 77   },
+], i => i < 6 ? '#8b5e3c' : '#5a8a6a');
+
+// ── 4. INVESTOR BARS ──
+makeBarChart('investor-bars', [
+  { label: 'Venture',             value: 47 },
+  { label: 'Impact Fund',         value: 37 },
+  { label: 'Private Equity',      value: 16 },
+  { label: 'Other',               value: 17 },
+  { label: 'Credit / Lending',    value: 11 },
+  { label: 'Real Assets / Land',  value: 9  },
+  { label: 'Bank / Green Bank',   value: 5  },
+  { label: 'Family Office',       value: 5  },
+  { label: 'Nonprofit / Advisory',value: 4  },
+], i => COLORS[i % COLORS.length]);
+
+// ── 5. BRAND CERT BARS ──
+(function() {
+  const data = [
+    { label: 'Regenerative Organic Certified (ROC)', value: 142, color: '#3d6b4f' },
+    { label: 'Rainforest Alliance Certified',        value: 47,  color: '#3a5a72' },
+    { label: 'Regenified',                           value: 40,  color: '#8b5e3c' },
+    { label: 'Certified Regenerative by AGW',        value: 2,   color: '#a07c3a' },
+  ];
+  const max = 142;
+  const container = document.getElementById('brand-cert-bars');
+
+  data.forEach((d, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'brand-cert-row';
+
+    const header = document.createElement('div');
+    header.className = 'brand-cert-header';
+
+    const name = document.createElement('span');
+    name.className = 'brand-cert-name';
+    name.textContent = d.label;
+
+    const count = document.createElement('span');
+    count.className = 'brand-cert-count';
+    count.textContent = `${d.value} brands`;
+
+    header.appendChild(name);
+    header.appendChild(count);
+
+    const bar = document.createElement('div');
+    bar.className = 'brand-cert-bar';
+
+    const fill = document.createElement('div');
+    fill.className = 'brand-cert-fill';
+    fill.style.background = d.color;
+    fill.style.transitionDelay = `${i * 100}ms`;
+    bar.appendChild(fill);
+
+    wrap.appendChild(header);
+    wrap.appendChild(bar);
+    container.appendChild(wrap);
+
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          fill.style.width = `${(d.value / max) * 100}%`;
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    obs.observe(wrap);
+  });
+
+  const note = document.createElement('div');
+  note.className = 'brand-cert-note';
+  note.textContent = 'ROC, Rainforest Alliance, and Regenified operate under distinct standards and verification processes. Their co-presence under "regenerative" branding reflects an ecosystem still negotiating what the term requires.';
+  container.appendChild(note);
+})();
+
+// ── 6. TECH BARS ──
+makeBarChart('tech-bars', [
+  { label: 'Seed',                  value: 20 },
+  { label: 'Private / Bootstrapped',value: 10 },
+  { label: 'Nonprofit / Grant',     value: 9  },
+  { label: 'Series B',              value: 9  },
+  { label: 'Series D/E',            value: 8  },
+  { label: 'Pre-Seed',              value: 7  },
+  { label: 'Series A',              value: 6  },
+  { label: 'Series C+',             value: 2  },
+], i => d3.interpolateRgb('#b8cfe0', '#2a4a62')(i / 7));
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+---
+---
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap");
+
+$base-font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$base-font-size:   16px;
+$base-font-weight: 300;
+$base-line-height: 1.65;
+
+$text-color:       #1c1c18;
+$background-color: #f7f5f1;
+$brand-color:      #3d6b4f;
+
+$grey-color:       #7a7a6e;
+$grey-color-light: #e0ddd4;
+$grey-color-dark:  #4a4a42;
+
+$content-width:    860px;
+
+@import "minima";
+
+.site-title,
+.post-title,
+.post-content h1,
+.post-content h2,
+.post-content h3 {
+  font-family: "Lora", Georgia, "Times New Roman", serif;
+  font-weight: 500;
+  color: $text-color;
+}
+
+.site-title {
+  font-weight: 600;
+}
+
+.site-nav .page-link {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.site-header {
+  border-bottom: 1px solid #e0ddd4;
+  background-color: $background-color;
+}
+
+.site-footer {
+  border-top: 1px solid #e0ddd4;
+  background-color: #faf8f4;
+}
+
+a:hover {
+  color: #8b5e3c;
+}
+
+.post-content blockquote {
+  border-left-color: $brand-color;
+  color: $grey-color-dark;
+}
+
+code,
+.post-content code {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-size: 0.9em;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid $grey-color-light;
+}
+
+.post-list-heading {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b4b4a8;
+  font-weight: 400;
+}

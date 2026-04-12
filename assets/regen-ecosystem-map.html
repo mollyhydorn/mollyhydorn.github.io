@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regenerative Agriculture Ecosystem</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f5f1;
+    --surface: #ffffff;
+    --ink: #1a1a18;
+    --ink-muted: #6b6b62;
+    --ink-faint: #b8b8ae;
+    --accent: #3d6b4f;
+    --accent-warm: #8b5e3c;
+    --accent-blue: #3a5a72;
+    --accent-gold: #a07c3a;
+    --accent-sage: #7a9b6e;
+    --border: #e2e0d8;
+
+    --node-farm: #7a9b6e;
+    --node-investor: #3a5a72;
+    --node-tech: #8b5e3c;
+    --node-ngo: #a07c3a;
+    --node-brand: #6b5a8b;
+    --node-research: #5a7a72;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow: hidden;
+  }
+
+  /* LAYOUT */
+  .shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 56px 1fr;
+    height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  h1 {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .header-sub {
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-weight: 300;
+  }
+
+  .node-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+  }
+
+  /* SIDEBAR */
+  aside {
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    overflow-y: auto;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .sidebar-section {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+
+  .sidebar-section:last-child { border-bottom: none; }
+
+  .sidebar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  /* FILTER CHIPS */
+  .filter-chips {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+    user-select: none;
+  }
+
+  .chip:hover { background: var(--bg); }
+  .chip.active { background: var(--bg); border-color: var(--border); }
+
+  .chip-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .chip-label {
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--ink);
+    flex: 1;
+  }
+
+  .chip-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+
+  /* INFO PANEL */
+  #info-panel {
+    padding: 0 20px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  #info-panel.visible { opacity: 1; }
+
+  .info-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .info-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .info-desc {
+    font-size: 12px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .info-connections {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+
+  .info-connections span {
+    color: var(--ink-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+  }
+
+  /* CANVAS */
+  main {
+    position: relative;
+    overflow: hidden;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .link {
+    stroke: var(--border);
+    stroke-width: 1;
+    opacity: 0.6;
+    transition: opacity 0.2s, stroke 0.2s;
+  }
+
+  .link.highlighted { stroke: var(--ink-muted); opacity: 0.8; stroke-width: 1.5; }
+  .link.dimmed { opacity: 0.08; }
+
+  .node circle {
+    cursor: pointer;
+    transition: r 0.2s, opacity 0.2s;
+    stroke: var(--surface);
+    stroke-width: 1.5;
+  }
+
+  .node.dimmed circle { opacity: 0.12; }
+  .node.dimmed text { opacity: 0.08; }
+
+  .node text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10.5px;
+    font-weight: 400;
+    fill: var(--ink);
+    pointer-events: none;
+    dominant-baseline: central;
+    transition: opacity 0.2s;
+  }
+
+  .node text.label-bg {
+    stroke: var(--bg);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    paint-order: stroke fill;
+  }
+
+  /* TOOLTIP */
+  #tooltip {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 200px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    z-index: 10;
+  }
+
+  #tooltip.visible { opacity: 1; }
+
+  .tooltip-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 3px;
+  }
+
+  .tooltip-name { font-weight: 500; color: var(--ink); font-size: 12.5px; }
+
+  /* INSTRUCTIONS */
+  .hint {
+    position: absolute;
+    bottom: 20px;
+    right: 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.06em;
+    line-height: 1.8;
+    text-align: right;
+  }
+
+  /* SCROLLBAR */
+  aside::-webkit-scrollbar { width: 4px; }
+  aside::-webkit-scrollbar-track { background: transparent; }
+  aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header>
+    <div class="header-left">
+      <h1>Regenerative Agriculture Ecosystem</h1>
+      <span class="header-sub">Illustrative landscape map</span>
+    </div>
+    <span class="node-count" id="node-count"></span>
+  </header>
+
+  <aside>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Filter by type</span>
+      <div class="filter-chips" id="filter-chips"></div>
+    </div>
+
+    <div class="sidebar-section" style="padding-top: 20px;">
+      <span class="sidebar-label">Selected</span>
+      <div id="info-panel">
+        <div class="info-type" id="info-type"></div>
+        <div class="info-name" id="info-name"></div>
+        <div class="info-desc" id="info-desc"></div>
+        <div class="info-connections" id="info-connections"></div>
+      </div>
+      <div id="info-empty" style="font-size:12px; color: var(--ink-faint); line-height:1.6;">
+        Click a node to<br>explore connections.
+      </div>
+    </div>
+  </aside>
+
+  <main id="main">
+    <svg id="svg"></svg>
+    <div id="tooltip">
+      <div class="tooltip-type" id="tt-type"></div>
+      <div class="tooltip-name" id="tt-name"></div>
+    </div>
+    <div class="hint">scroll to zoom &nbsp;·&nbsp; drag to pan<br>click node to select</div>
+  </main>
+
+</div>
+
+<script>
+const TYPES = {
+  farm:     { label: 'Farm / Producer',    color: 'var(--node-farm)',     count: 0 },
+  investor: { label: 'Investor / Funder',  color: 'var(--node-investor)', count: 0 },
+  tech:     { label: 'AgTech / Input',     color: 'var(--node-tech)',     count: 0 },
+  ngo:      { label: 'NGO / Nonprofit',    color: 'var(--node-ngo)',      count: 0 },
+  brand:    { label: 'Brand / Buyer',      color: 'var(--node-brand)',    count: 0 },
+  research: { label: 'Research / Cert.',   color: 'var(--node-research)', count: 0 },
+};
+
+const nodes = [
+  // FARMS
+  { id: 'f1',  type: 'farm',     size: 14, label: 'Grasslands Ranch',    desc: 'Diversified livestock operation transitioning to mob grazing and silvopasture across 4,200 acres in the Midwest.' },
+  { id: 'f2',  type: 'farm',     size: 12, label: 'Soil House Farm',      desc: 'Small-scale vegetable and grain operation focused on no-till methods and cover crop diversity in the Northeast.' },
+  { id: 'f3',  type: 'farm',     size: 16, label: 'Clearwater Collective', desc: 'Multi-farm cooperative aggregating regeneratively-certified produce for institutional buyers across the mid-Atlantic.' },
+  { id: 'f4',  type: 'farm',     size: 10, label: 'Ridgeline Orchards',   desc: 'Perennial fruit and nut operation integrating agroforestry corridors to support pollinator habitat.' },
+  { id: 'f5',  type: 'farm',     size: 13, label: 'Lowlands Grain Co.',   desc: 'Row crop operation piloting biological inputs and strip-till to reduce synthetic fertilizer dependency.' },
+  { id: 'f6',  type: 'farm',     size: 11, label: 'Blue Mesa Ranches',    desc: 'Holistic planned grazing operation in the Southwest, participating in soil carbon measurement pilots.' },
+
+  // INVESTORS
+  { id: 'i1',  type: 'investor', size: 18, label: 'Canopy Capital',       desc: 'Impact-first fund focused on pre-Series A regenerative food and agriculture companies. $180M AUM.' },
+  { id: 'i2',  type: 'investor', size: 15, label: 'Roots Ventures',       desc: 'Early-stage investor backing AgTech and supply chain infrastructure enabling the transition to regenerative.' },
+  { id: 'i3',  type: 'investor', size: 20, label: 'Farmland Trust Fund',  desc: 'Acquires and leases agricultural land with conservation easements tied to regenerative practice requirements.' },
+  { id: 'i4',  type: 'investor', size: 12, label: 'Soil Credit Partners', desc: 'Structured finance vehicle monetizing verified soil carbon credits for working farm operations.' },
+  { id: 'i5',  type: 'investor', size: 13, label: 'Good Food Collective', desc: 'Philanthropic collaborative pooling donor capital for systems-level investment in regional food economies.' },
+
+  // TECH / INPUTS
+  { id: 't1',  type: 'tech',     size: 16, label: 'TerraMetrics',         desc: 'Remote sensing platform providing field-level soil organic matter and carbon stock measurement via satellite and ground-truth sampling.' },
+  { id: 't2',  type: 'tech',     size: 14, label: 'Myco Systems',         desc: 'Biological input company developing mycorrhizal inoculants and compost tea formulations for cash crop adoption.' },
+  { id: 't3',  type: 'tech',     size: 12, label: 'Fieldstack',           desc: 'Farm management software with regenerative practice tracking modules built to interface with carbon registries.' },
+  { id: 't4',  type: 'tech',     size: 15, label: 'CoverMap AI',          desc: 'Machine learning platform using satellite imagery to verify cover crop adoption at scale for insurance and credit programs.' },
+  { id: 't5',  type: 'tech',     size: 11, label: 'Biome Analytics',      desc: 'Soil microbiome sequencing service providing actionable biological health scores for farm advisors and producers.' },
+
+  // NGOs
+  { id: 'n1',  type: 'ngo',      size: 17, label: 'Rooted Earth Alliance', desc: 'Membership organization providing regenerative transition support, peer learning networks, and policy advocacy for farmers.' },
+  { id: 'n2',  type: 'ngo',      size: 14, label: 'Open Lands Project',   desc: 'Farmland access nonprofit focused on connecting beginning farmers with landowners committed to regenerative stewardship.' },
+  { id: 'n3',  type: 'ngo',      size: 13, label: 'Carbon Commons',       desc: 'Coalition coordinating standard-setting, data sharing, and public education on agricultural carbon sequestration.' },
+  { id: 'n4',  type: 'ngo',      size: 12, label: 'Seed Forward Fund',    desc: 'Provides grants and technical assistance to BIPOC-led and beginning farms adopting regenerative models.' },
+
+  // BRANDS / BUYERS
+  { id: 'b1',  type: 'brand',    size: 18, label: 'Verdure Foods',        desc: 'Consumer packaged goods brand with full supply chain transparency and regenerative sourcing requirements for all ingredient partners.' },
+  { id: 'b2',  type: 'brand',    size: 15, label: 'Common Table Co.',     desc: 'Direct-to-consumer meal kit company building sourcing relationships with certified regenerative farms.' },
+  { id: 'b3',  type: 'brand',    size: 13, label: 'Pastoral Dairy',       desc: 'Dairy brand sourcing exclusively from pasture-raised, regeneratively managed farms with third-party verification.' },
+  { id: 'b4',  type: 'brand',    size: 12, label: 'NorthStar Hospitality', desc: 'Restaurant group with farm-forward procurement policy and published annual supply chain impact report.' },
+
+  // RESEARCH / CERTIFICATION
+  { id: 'r1',  type: 'research', size: 16, label: 'Regen Organic Alliance', desc: 'Certification body setting and verifying holistic standards for regenerative organic agriculture across soil, animal welfare, and worker equity.' },
+  { id: 'r2',  type: 'research', size: 14, label: 'Land Systems Lab',     desc: 'University-affiliated research group studying soil carbon dynamics, ecosystem services valuation, and practice adoption incentives.' },
+  { id: 'r3',  type: 'research', size: 13, label: 'Prairie Institute',    desc: 'Independent research center focused on perennial cropping systems, prairie restoration, and watershed health.' },
+  { id: 'r4',  type: 'research', size: 11, label: 'VerifiedSoil',         desc: 'Third-party verification service providing auditable soil health assessments used by brands, buyers, and carbon markets.' },
+];
+
+const links = [
+  // Farms <-> Investors
+  { source: 'f1', target: 'i3' }, { source: 'f3', target: 'i1' },
+  { source: 'f5', target: 'i2' }, { source: 'f6', target: 'i4' },
+  { source: 'f2', target: 'i5' }, { source: 'f3', target: 'i3' },
+
+  // Farms <-> Tech
+  { source: 'f1', target: 't1' }, { source: 'f5', target: 't4' },
+  { source: 'f2', target: 't2' }, { source: 'f6', target: 't1' },
+  { source: 'f3', target: 't3' }, { source: 'f4', target: 't2' },
+  { source: 'f5', target: 't5' }, { source: 'f1', target: 't3' },
+
+  // Farms <-> NGOs
+  { source: 'f2', target: 'n1' }, { source: 'f4', target: 'n2' },
+  { source: 'f6', target: 'n1' }, { source: 'f1', target: 'n3' },
+  { source: 'f5', target: 'n3' },
+
+  // Farms <-> Brands
+  { source: 'f1', target: 'b3' }, { source: 'f3', target: 'b1' },
+  { source: 'f2', target: 'b2' }, { source: 'f4', target: 'b4' },
+  { source: 'f3', target: 'b2' }, { source: 'f6', target: 'b3' },
+
+  // Farms <-> Research
+  { source: 'f1', target: 'r1' }, { source: 'f3', target: 'r1' },
+  { source: 'f5', target: 'r2' }, { source: 'f6', target: 'r4' },
+  { source: 'f2', target: 'r3' },
+
+  // Tech <-> Investors
+  { source: 't1', target: 'i1' }, { source: 't2', target: 'i2' },
+  { source: 't4', target: 'i2' }, { source: 't3', target: 'i1' },
+  { source: 't5', target: 'i2' },
+
+  // Tech <-> Research
+  { source: 't1', target: 'r2' }, { source: 't5', target: 'r2' },
+  { source: 't4', target: 'r4' }, { source: 't1', target: 'r4' },
+
+  // NGOs <-> Investors
+  { source: 'n2', target: 'i5' }, { source: 'n4', target: 'i5' },
+  { source: 'n3', target: 'i4' }, { source: 'n1', target: 'i3' },
+
+  // Brands <-> Research / Cert
+  { source: 'b1', target: 'r1' }, { source: 'b3', target: 'r1' },
+  { source: 'b2', target: 'r4' }, { source: 'b4', target: 'r4' },
+  { source: 'b1', target: 'r2' },
+
+  // Research <-> NGOs
+  { source: 'r2', target: 'n3' }, { source: 'r3', target: 'n1' },
+  { source: 'r1', target: 'n1' }, { source: 'r4', target: 'n3' },
+
+  // Cross-sector
+  { source: 'i1', target: 'n1' }, { source: 'i3', target: 'n2' },
+  { source: 'b1', target: 'i1' }, { source: 't3', target: 'b1' },
+];
+
+// Count types
+nodes.forEach(n => TYPES[n.type].count++);
+
+// Build filter chips
+const filterChips = document.getElementById('filter-chips');
+const activeFilters = new Set(Object.keys(TYPES));
+
+Object.entries(TYPES).forEach(([key, meta]) => {
+  const chip = document.createElement('div');
+  chip.className = 'chip active';
+  chip.dataset.type = key;
+  chip.innerHTML = `
+    <div class="chip-dot" style="background:${meta.color}"></div>
+    <span class="chip-label">${meta.label}</span>
+    <span class="chip-count">${meta.count}</span>
+  `;
+  chip.addEventListener('click', () => toggleFilter(key, chip));
+  filterChips.appendChild(chip);
+});
+
+function toggleFilter(type, chip) {
+  if (activeFilters.has(type)) {
+    if (activeFilters.size === 1) return; // keep at least one
+    activeFilters.delete(type);
+    chip.classList.remove('active');
+  } else {
+    activeFilters.add(type);
+    chip.classList.add('active');
+  }
+  updateVisibility();
+}
+
+function updateVisibility() {
+  d3.selectAll('.node').each(function(d) {
+    const visible = activeFilters.has(d.type);
+    d3.select(this).classed('dimmed', !visible);
+  });
+  d3.selectAll('.link').each(function(d) {
+    const srcVisible = activeFilters.has(d.source.type);
+    const tgtVisible = activeFilters.has(d.target.type);
+    d3.select(this).classed('dimmed', !srcVisible || !tgtVisible);
+  });
+}
+
+// Node count
+document.getElementById('node-count').textContent = `${nodes.length} organizations · ${links.length} connections`;
+
+// D3 Setup
+const svg = d3.select('#svg');
+const mainEl = document.getElementById('main');
+const g = svg.append('g');
+
+const width = () => mainEl.clientWidth;
+const height = () => mainEl.clientHeight;
+
+// Zoom
+const zoom = d3.zoom()
+  .scaleExtent([0.3, 3])
+  .on('zoom', e => g.attr('transform', e.transform));
+svg.call(zoom);
+
+// Color resolver
+function nodeColor(type) {
+  const map = {
+    farm: '#7a9b6e', investor: '#3a5a72', tech: '#8b5e3c',
+    ngo: '#a07c3a', brand: '#6b5a8b', research: '#5a7a72'
+  };
+  return map[type] || '#888';
+}
+
+// Simulation
+const simulation = d3.forceSimulation(nodes)
+  .force('link', d3.forceLink(links).id(d => d.id).distance(90).strength(0.4))
+  .force('charge', d3.forceManyBody().strength(-320))
+  .force('center', d3.forceCenter(width() / 2, height() / 2))
+  .force('collision', d3.forceCollide().radius(d => d.size + 18))
+  .force('x', d3.forceX(width() / 2).strength(0.04))
+  .force('y', d3.forceY(height() / 2).strength(0.04));
+
+// Links
+const link = g.append('g')
+  .selectAll('line')
+  .data(links)
+  .join('line')
+  .attr('class', 'link');
+
+// Nodes
+const node = g.append('g')
+  .selectAll('g')
+  .data(nodes)
+  .join('g')
+  .attr('class', 'node')
+  .call(d3.drag()
+    .on('start', (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+    .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+    .on('end', (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; })
+  );
+
+node.append('circle')
+  .attr('r', d => d.size)
+  .attr('fill', d => nodeColor(d.type))
+  .attr('fill-opacity', 0.85);
+
+// Labels (bg + fg for readability)
+node.append('text')
+  .attr('class', 'label-bg')
+  .attr('x', d => d.size + 5)
+  .attr('y', 0)
+  .text(d => d.label);
+
+node.append('text')
+  .attr('x', d => d.size + 5)
+  .attr('y', 0)
+  .text(d => d.label);
+
+// Tooltip
+const tooltip = document.getElementById('tooltip');
+const ttType = document.getElementById('tt-type');
+const ttName = document.getElementById('tt-name');
+
+// Info panel
+const infoPanel = document.getElementById('info-panel');
+const infoEmpty = document.getElementById('info-empty');
+const infoType = document.getElementById('info-type');
+const infoName = document.getElementById('info-name');
+const infoDesc = document.getElementById('info-desc');
+const infoConnections = document.getElementById('info-connections');
+
+let selectedNode = null;
+
+node.on('mouseover', (e, d) => {
+  ttType.textContent = TYPES[d.type].label;
+  ttName.textContent = d.label;
+  tooltip.classList.add('visible');
+})
+.on('mousemove', (e) => {
+  const rect = mainEl.getBoundingClientRect();
+  let x = e.clientX - rect.left + 14;
+  let y = e.clientY - rect.top - 10;
+  if (x + 210 > rect.width) x = e.clientX - rect.left - 220;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+})
+.on('mouseout', () => {
+  tooltip.classList.remove('visible');
+})
+.on('click', (e, d) => {
+  e.stopPropagation();
+  if (selectedNode === d.id) {
+    clearSelection();
+    return;
+  }
+  selectNode(d);
+});
+
+svg.on('click', clearSelection);
+
+function selectNode(d) {
+  selectedNode = d.id;
+
+  const connectedIds = new Set([d.id]);
+  const connectedLinks = [];
+  links.forEach(l => {
+    if (l.source.id === d.id || l.target.id === d.id) {
+      connectedIds.add(l.source.id);
+      connectedIds.add(l.target.id);
+      connectedLinks.push(l);
+    }
+  });
+
+  node.classed('dimmed', nd => !connectedIds.has(nd.id));
+  link.classed('dimmed', lk => lk.source.id !== d.id && lk.target.id !== d.id);
+  link.classed('highlighted', lk => lk.source.id === d.id || lk.target.id === d.id);
+
+  // Info panel
+  infoType.textContent = TYPES[d.type].label;
+  infoType.style.color = nodeColor(d.type);
+  infoName.textContent = d.label;
+  infoDesc.textContent = d.desc;
+  const connCount = connectedIds.size - 1;
+  infoConnections.innerHTML = `${connCount} connection${connCount !== 1 ? 's' : ''} &nbsp;<span>across ${countTypes(connectedIds, d.id)} sector${countTypes(connectedIds, d.id) !== 1 ? 's' : ''}</span>`;
+
+  infoPanel.classList.add('visible');
+  infoEmpty.style.display = 'none';
+}
+
+function countTypes(ids, selfId) {
+  const types = new Set();
+  nodes.forEach(n => { if (ids.has(n.id) && n.id !== selfId) types.add(n.type); });
+  return types.size;
+}
+
+function clearSelection() {
+  selectedNode = null;
+  node.classed('dimmed', false);
+  link.classed('dimmed', false).classed('highlighted', false);
+  infoPanel.classList.remove('visible');
+  infoEmpty.style.display = '';
+  updateVisibility();
+}
+
+simulation.on('tick', () => {
+  link
+    .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+    .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+  node.attr('transform', d => `translate(${d.x},${d.y})`);
+});
+
+// Resize
+window.addEventListener('resize', () => {
+  simulation.force('center', d3.forceCenter(width() / 2, height() / 2));
+  simulation.force('x', d3.forceX(width() / 2).strength(0.04));
+  simulation.force('y', d3.forceY(height() / 2).strength(0.04));
+  simulation.alpha(0.1).restart();
+});
+</script>
+</body>
+</html>

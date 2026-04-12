@@ -20,14 +20,21 @@
 
 title: Molly Hydorn
 email: mollyhydorn@gmail.com
-description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+author: Molly Hydorn
+description: >-
+  Ecosystem mapping and partnership development in regenerative agriculture.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://mollyhydorn.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
 linkedin_username:  mollyhydorn
+
+header_pages:
+  - case-studies.markdown
+  - about.markdown
+
+include:
+  - assets/regen-data-viz.html
+  - assets/regen-ecosystem-map.html
 
 # Build settings
 theme: minima

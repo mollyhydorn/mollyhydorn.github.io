@@ -4,15 +4,10 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+I focus on ecosystem mapping and partnership development in regenerative agriculture. My work centers on making fragmented landscapes legible: who is operating in the space, how they cluster by sector and geography, and what that means for outreach, capital, and collaboration.
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+I have developed large-scale landscape databases, manual research and enrichment workflows, and narrative analysis that translate data into decisions. I care about honest scope: what a map captures well, what it systematically misses, and how those limitations shape strategy.
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
+Connect on [LinkedIn](https://www.linkedin.com/in/{{ site.linkedin_username | strip }}/).
 
-
-[jekyll-organization]: https://github.com/jekyll
+The data analysis, interactive visualizations, and editing on this site were executed in collaboration with Claude. Site build was assisted by Cursor. 
