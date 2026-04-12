@@ -28,7 +28,7 @@ Each record was researched and enriched manually, with organization descriptions
 
 This landscape map was built using two primary sourcing approaches, each suited to a different segment of the ecosystem.
 
-For farms and brands, I drew directly from the registries of active certifying organizations, including Regenerative Organic Certified (ROC), Regenified, the American Grassfed Association, Savory's Ecological Outcome Verification program, and the Real Organic Project. Registry-based sourcing produces high-confidence records within a defined scope: every farm or brand listed has been third-party verified and is actively maintained by the certifying body. The limitation is the inverse. This method captures the certified universe comprehensively, but says nothing about the much larger population of farms operating regeneratively without formal verification.
+For farms and brands, I drew directly from the registries of active certifying organizations, including Regenerative Organic Certified (ROC), Regenified, the American Grassfed Association, Savory's Ecological Outcome Verification program, and the Real Organic Project. Registry-based sourcing produces high-confidence records within a defined scope. This method captures the certified universe comprehensively, but says nothing about the much larger population of farms operating regeneratively without formal verification.
 
 To reach that broader population, as well as investors and technology companies, I used LinkedIn keyword search filtered by organization type. Searching "regenerative agriculture" and restricting results to farms, financial institutions, and technology companies respectively produced a large initial universe that I then reviewed and enriched manually.
 
