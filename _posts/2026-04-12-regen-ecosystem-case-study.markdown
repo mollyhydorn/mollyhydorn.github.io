@@ -3,7 +3,7 @@ layout: post
 title: "Mapping the Regenerative Agriculture Ecosystem: From Landscape to Network"
 date: 2026-04-12
 categories: work
-permalink: /case-study/
+permalink: /landscape-map-case-study/
 ---
 
 ### The Problem
