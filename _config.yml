@@ -19,8 +19,7 @@
 # in the templates via {{ site.myvariable }}.
 
 title: Molly Hydorn, Ph.D.
-email: mollyhydorn@gmail.com
-author: Molly Hydorn, Ph.D.
+email: mollyhydorn@gmail.com  
 description: >-
   Ecosystem mapping and partnership development in regenerative agriculture.
 baseurl: "" # the subpath of your site, e.g. /blog
@@ -29,12 +28,14 @@ url: "https://mollyhydorn.github.io" # the base hostname & protocol for your sit
 linkedin_username:  mollyhydorn
 
 header_pages:
-  - case-studies.markdown
   - about.markdown
+  - case-studies.markdown
+  - resume.markdown
 
 include:
   - assets/regen-data-viz.html
   - assets/regen-ecosystem-map.html
+  - assets/molly-hydorn-resume.pdf
 
 # Build settings
 theme: minima
