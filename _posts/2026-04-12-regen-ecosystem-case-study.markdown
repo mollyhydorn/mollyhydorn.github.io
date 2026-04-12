@@ -22,8 +22,6 @@ Over the course of my work at Why Regenerative, I developed a structured landsca
 
 Each record was researched and enriched manually, with organization descriptions, web links, geographic data, product categories, certification status, fundraising stage, and fund type where applicable. The goal was not just a list, but a usable intelligence asset: something that could support outreach prioritization, partnership identification, event programming, and strategic planning.
 
-The database informed Why Regenerative's partnership development directly, supporting the identification and cultivation of relationships with organizations including Bard Graduate Studies, Gallant, Shanrock, and the Regenerative Organic Alliance, among others.
-
 ---
 
 ### Methodology
