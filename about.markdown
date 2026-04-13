@@ -4,6 +4,8 @@ title: About
 permalink: /about/
 ---
 
+<img src="{{ '/assets/headshot.png' | relative_url }}" alt="Headshot of Molly Hydorn" style="float: right; width: 210px; max-width: 40%; margin: 0 0 1rem 1.5rem; border-radius: 0;" />
+
 I came to regenerative agriculture through an unlikely route: a Ph.D. exploring mechanisms of stress response and dormancy in soil-dwelling bacteria from Columbia University. Five years of independent research taught me how to structure complex systems, synthesize messy data, and communicate findings to people who don't share your vocabulary. These skills translate directly to ecosystem mapping and partnership development.
 
 Today I focus on making fragmented agricultural landscapes legible: who is operating in the space, how they cluster by sector and geography, and what that means for collaboration, capital, and strategy. I develop large-scale databases, research workflows, and the narrative analysis that turns data into decisions.
