@@ -11,3 +11,5 @@ I work at the intersection of regenerative agriculture, structured landscape res
 **[Case studies](/case-studies/)**, including *[Mapping the Regenerative Agriculture Ecosystem: From Landscape to Network](/landscape-map-case-study/)* on the U.S. regenerative agriculture landscape and moving from roster to network.
 
 More about my background and focus: **[About](/about/)**
+
+Check out my **[Resume](/resume/)** and **[Publications](/publications/)**.

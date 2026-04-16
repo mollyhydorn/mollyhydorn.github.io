@@ -31,6 +31,7 @@ header_pages:
   - about.markdown
   - case-studies.markdown
   - resume.markdown
+  - publications.markdown
 
 include:
   - assets/regen-data-viz.html
