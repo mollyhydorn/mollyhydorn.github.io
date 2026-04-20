@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regenerative Agriculture — Certification Brand Ecosystem</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green-mid: #3B6D11; --ink: #1c2420; --muted: #5a6b62;
+    --border: rgba(59,109,17,0.15); --panel-bg: rgba(255,255,255,0.97); --bg: #f4f5f0;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  header { padding: 16px 24px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 16px; background: var(--bg); flex-shrink: 0; }
+  header h1 { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); letter-spacing: -0.02em; }
+  header p { font-size: 13px; color: var(--muted); font-weight: 300; }
+  header .stats { margin-left: auto; display: flex; gap: 24px; }
+  .stat { text-align: right; }
+  .stat-v { font-size: 18px; font-weight: 500; color: var(--green-mid); display: block; }
+  .stat-l { font-size: 11px; color: var(--muted); }
+  #canvas { flex: 1; position: relative; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+  #panel { position: absolute; top: 16px; right: 16px; width: 228px; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; opacity: 0; pointer-events: none; transition: opacity 0.2s; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+  #panel.vis { opacity: 1; pointer-events: auto; }
+  #p-tag { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green-mid); margin-bottom: 5px; }
+  #p-name { font-family: 'DM Serif Display', serif; font-size: 16px; font-weight: 400; color: var(--ink); line-height: 1.3; margin-bottom: 8px; }
+  #p-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 10px; font-weight: 300; }
+  #p-stats { display: flex; gap: 16px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .ps-v { font-size: 17px; font-weight: 500; color: var(--ink); display: block; }
+  .ps-l { font-size: 10px; color: var(--muted); }
+  #legend { position: absolute; bottom: 16px; left: 16px; display: flex; flex-direction: column; gap: 5px; }
+  .leg { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
+  .leg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .leg-line { width: 18px; height: 2px; flex-shrink: 0; }
+  #hint { position: absolute; bottom: 16px; right: 16px; font-size: 11px; color: var(--muted); font-weight: 300; }
+  .node-dim { opacity: 0.1; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Certification Brand Ecosystem</h1>
+  <p>Regenerative Agriculture Ecosystem · Licensed Brands, Farms &amp; Cross-Coalition Overlaps</p>
+  <div class="stats">
+    <div class="stat"><span class="stat-v">150+</span><span class="stat-l">licensed brands</span></div>
+    <div class="stat"><span class="stat-v">44</span><span class="stat-l">countries</span></div>
+    <div class="stat"><span class="stat-v">18.4M</span><span class="stat-l">certified acres</span></div>
+  </div>
+</header>
+<div id="canvas">
+  <svg id="svg"></svg>
+  <div id="panel">
+    <div id="p-tag"></div>
+    <div id="p-name"></div>
+    <div id="p-desc"></div>
+    <div id="p-stats"></div>
+  </div>
+  <div id="legend">
+    <div class="leg"><div class="leg-dot" style="background:#3B6D11;width:20px;height:20px;border-radius:50%;opacity:.9"></div>Certification hub</div>
+    <div class="leg"><div class="leg-dot" style="background:#3B6D11"></div>Certified food / wellness brand</div>
+    <div class="leg"><div class="leg-dot" style="background:#993C1D"></div>Certified fiber / apparel brand</div>
+    <div class="leg"><div class="leg-dot" style="background:#97C459"></div>Certified farm or winery</div>
+    <div class="leg"><div class="leg-dot" style="background:#993556"></div>Also consumer brand coalition member</div>
+    <div class="leg"><div class="leg-dot" style="background:#185FA5"></div>Also trade association member</div>
+    <div class="leg"><div class="leg-dot" style="background:#854F0B"></div>Also sourcing standard verified</div>
+    <div class="leg"><div class="leg-line" style="background:repeating-linear-gradient(90deg,#854F0B 0,#854F0B 5px,transparent 5px,transparent 8px)"></div>Cross-coalition overlap</div>
+  </div>
+  <div id="hint">click any node to explore · scroll to zoom · drag to pan</div>
+</div>
+<script>
+const NODES = [
+  {id:'roa',    label:'Cert. Coalition A',     full:'Certification Coalition A',              color:'#3B6D11', r:32, hub:true, type:'Certification hub',         desc:'Governing body of the ecosystem\'s flagship regenerative certification standard. Three pillars: soil health, animal welfare, and farmer fairness. 150+ licensed brands, 300+ certified farms across 44 countries. $50M+ retail sales in 2024.', members:156},
+  {id:'ota',    label:'Trade Assoc. A',         full:'Trade Association A',                    color:'#185FA5', r:18, hub:true, type:'Trade coalition',            desc:'The primary organic trade association. Many certified brands are simultaneously trade association members, creating the key overlap between the certification ecosystem and the organic trade network.', members:96},
+  {id:'rgb',    label:'Brand Coalition A',      full:'Consumer Brand Coalition A',             color:'#993556', r:16, hub:true, type:'Brand coalition',            desc:'Trade association for consumer food and beverage brands committed to regenerative sourcing. 31 inaugural members launched 2024. Several are also certified under the main certification program.', members:29},
+  {id:'l2m',    label:'Sourcing Standard A',    full:'Regenerative Sourcing Standard A',       color:'#854F0B', r:16, hub:true, type:'Sourcing standard',          desc:'Outcome-based land health verification. Several certified brands source from verified producers under this standard, linking product certification to land management verification.', members:61},
+  {id:'patagprov',label:'Food Brand A',         full:'Food Brand A',                           color:'#3B6D11', r:9,  type:'Food brand',              desc:'Certified food brand. Products include perennial grain beverages, crackers, and snacks. Parent company is a founding member of the certification coalition.'},
+  {id:'lundberg',label:'Grain Brand A',         full:'Grain Brand A',                          color:'#185FA5', r:9,  type:'Grain brand',             desc:'Certified grain brand with 50+ rice and grain SKUs. Also trade association member. Multi-generation family grain farming business.'},
+  {id:'simplmils',label:'Baking Brand A',       full:'Baking Brand A',                         color:'#3B6D11', r:8,  type:'Baking brand',            desc:'Certified for oat flour baking mixes and pancake mixes. Better-for-you baking brand.'},
+  {id:'natpath', label:'Cereal Brand A',        full:'Cereal Brand A',                         color:'#185FA5', r:8,  type:'Cereal brand',            desc:'Certified organic oatmeal and cereal. Also trade association member. Family-owned organic brand.'},
+  {id:'gaiaherbs',label:'Herbal Brand A',       full:'Herbal Brand A',                         color:'#3B6D11', r:8,  type:'Herbal brand',            desc:'Certified herbal supplement brand. 7 herbal extract products including adaptogens and botanicals. Flagship certification ally.'},
+  {id:'herbpharm',label:'Herbal Brand B',       full:'Herbal Brand B',                         color:'#3B6D11', r:7,  type:'Herbal brand',            desc:'Certified liquid herbal extract brand. 9 products. Farm-to-bottle herbal medicine company with certified organic growing operations.'},
+  {id:'pureel',  label:'Granola Brand A',       full:'Granola Brand A',                        color:'#3B6D11', r:7,  type:'Granola brand',           desc:'Certified ancient grain granola. Better-for-you snack brand using certified regenerative oats.'},
+  {id:'lotus',   label:'Rice Brand A',          full:'Rice Brand A',                           color:'#3B6D11', r:7,  type:'Rice brand',              desc:'Certified heirloom rice brand. Also received impact investment from a regenerative food fund. Known for heritage and ancient grain varieties.'},
+  {id:'frontier',label:'Spice Cooperative A',   full:'Spice Cooperative A',                    color:'#185FA5', r:8,  type:'Spice cooperative',       desc:'Certified spices, vanilla, and seasonings. Worker-owned cooperative. Also trade association member.'},
+  {id:'orgind',  label:'Wellness Brand A',      full:'Wellness Brand A',                       color:'#185FA5', r:7,  type:'Herbal / wellness',       desc:'Certified herbal teas and wellness capsules. Also trade association member. Sources from smallholder farmers in South Asia.'},
+  {id:'mtnrose', label:'Botanical Brand A',     full:'Botanical Brand A',                      color:'#3B6D11', r:7,  type:'Botanical brand',         desc:'Certified botanical and herbal product brand. 40+ extracts and bulk ingredients. Sources certified organic herbs globally.'},
+  {id:'drbron',  label:'Personal Care Brand A', full:'Personal Care Brand A',                  color:'#3B6D11', r:8,  type:'Personal care brand',    desc:'Certified personal care brand. Founding member of the certification coalition. Also member of a regenerative agriculture policy advocacy coalition. Family-owned B Corp.'},
+  {id:'bigtree', label:'Ingredient Brand A',    full:'Ingredient Brand A',                     color:'#185FA5', r:7,  type:'Ingredient brand',        desc:'Certified coconut sugar and ingredient brand. Also trade association member. Sources from smallholder coconut farming communities.'},
+  {id:'alecs',   label:'Ice Cream Brand A',     full:'Ice Cream Brand A',                      color:'#993556', r:9,  type:'Ice cream brand',         desc:'Certified + Consumer Brand Coalition + Sourcing Standard verified. One of the few small brands spanning three independent coalitions — a notable cross-coalition connector in the network.'},
+  {id:'lilbucks',label:'Snack Brand A',         full:'Snack Brand A',                          color:'#993556', r:7,  type:'Snack brand',             desc:'Certified sprouted grain snack brand. Also consumer brand coalition member.'},
+  {id:'manharv', label:'Hemp Food Brand A',     full:'Hemp Food Brand A',                      color:'#993556', r:7,  type:'Hemp food brand',         desc:'Certified hemp hearts and superfood blends. Also consumer brand coalition member.'},
+  {id:'philfds', label:'Nut Butter Brand A',    full:'Nut Butter Brand A',                     color:'#993556', r:7,  type:'Nut butter brand',        desc:'Certified sprouted and fermented almond butters. Also consumer brand coalition member.'},
+  {id:'catspring',label:'Tea Brand A',          full:'Tea Brand A',                            color:'#993556', r:6,  type:'Tea brand',               desc:'Certified native-ingredient tea brand. Also consumer brand coalition member.'},
+  {id:'latouch', label:'Oil Brand A',           full:'Oil Brand A',                            color:'#993556', r:7,  type:'Oil brand',               desc:'Certified culinary oil brand. Also consumer brand coalition member. Artisan oil company.'},
+  {id:'patagcloth',label:'Outdoor Apparel A',   full:'Outdoor Apparel Brand A',                color:'#993C1D', r:9,  type:'Outdoor apparel',         desc:'Certified cotton apparel. Parent company is a founding member of the certification coalition. Also founding member of outdoor conservation coalition (1989) and fiber standards body member.'},
+  {id:'prana',   label:'Apparel Brand A',       full:'Apparel Brand A',                        color:'#993C1D', r:7,  type:'Outdoor apparel',         desc:'Certified organic cotton knitwear and t-shirts. Also member of the outdoor industry conservation coalition.'},
+  {id:'hmroa',   label:'Fashion Brand A',       full:'Fashion Brand A',                        color:'#993C1D', r:7,  type:'Fashion brand',           desc:'Certified cotton knitted garments. Also fiber standards body member. Largest fashion brand in the certification program by revenue.'},
+  {id:'maggies', label:'Sustainable Fashion A', full:'Sustainable Fashion Brand A',            color:'#993C1D', r:7,  type:'Sustainable fashion',     desc:'Certified wide range of organic cotton apparel. Sustainable fashion brand with deep farmer relationships.'},
+  {id:'knowsup', label:'Impact Apparel A',      full:'Impact Apparel Brand A',                 color:'#993C1D', r:6,  type:'Apparel brand',           desc:'Certified garments. Impact apparel brand with a named maker program connecting consumers to specific garment workers.'},
+  {id:'bergman', label:'Textile Supplier A',    full:'Textile Supplier A',                     color:'#993C1D', r:6,  type:'Textile supplier',        desc:'Certified cotton fabric, yarn, and garment supplier. Sources pima and tanguis cotton. Supplies to US and European apparel brands.'},
+  {id:'starwalk',label:'Farm Brand A',          full:'Farm Brand A',                           color:'#97C459', r:8,  type:'Regenerative farm',       desc:'Certified multi-species farm producing beef, pork, and dairy. Direct-to-consumer brand.'},
+  {id:'burroughs',label:'Nut Farm A',           full:'Nut Farm Brand A',                       color:'#97C459', r:8,  type:'Regenerative farm',       desc:'Certified nut and olive farm. Also consumer brand coalition member. Multi-product farm selling direct and wholesale.'},
+  {id:'oatman',  label:'Heritage Grain Farm A', full:'Heritage Grain Farm A',                  color:'#97C459', r:7,  type:'Heritage grain farm',     desc:'Certified heritage wheat farm. Grows multiple ancient wheat varieties. Sells to artisan mills and bakeries.'},
+  {id:'grgich',  label:'Winery A',              full:'Winery A',                               color:'#97C459', r:7,  type:'Winery',                  desc:'Certified estate winery. 35+ wine SKUs across multiple vintages. One of the first certified wineries in its appellation.'},
+  {id:'donum',   label:'Winery B',              full:'Winery B',                               color:'#97C459', r:7,  type:'Winery',                  desc:'Certified estate winery. 80+ wine SKUs. Known for single-vineyard expressions and a large sculptural art collection on the estate.'},
+  {id:'gundlach',label:'Winery C',              full:'Winery C',                               color:'#97C459', r:7,  type:'Winery',                  desc:'Certified multi-generation family estate winery. Broad portfolio of varietals across multiple AVAs.'},
+  {id:'sierraorch',label:'Orchard Farm A',      full:'Orchard Farm A',                         color:'#97C459', r:6,  type:'Farm',                    desc:'Certified walnut and olive producer. Direct-to-consumer and wholesale distribution.'},
+];
+
+const LINKS = [];
+const food  = ['patagprov','lundberg','simplmils','natpath','gaiaherbs','herbpharm','pureel','lotus','frontier','orgind','mtnrose','drbron','bigtree','alecs','lilbucks','manharv','philfds','catspring','latouch'];
+const fiber = ['patagcloth','prana','hmroa','maggies','knowsup','bergman'];
+const farms = ['starwalk','burroughs','oatman','grgich','donum','gundlach','sierraorch'];
+[...food,...fiber,...farms].forEach(id=>LINKS.push({s:'roa',t:id,w:1,op:.18,c:'#3B6D11'}));
+['lundberg','frontier','natpath','bigtree','orgind'].forEach(id=>LINKS.push({s:'ota',t:id,w:1.5,op:.4,c:'#185FA5',d:'5,3'}));
+['alecs','lilbucks','manharv','philfds','catspring','latouch','burroughs'].forEach(id=>LINKS.push({s:'rgb',t:id,w:1.5,op:.4,c:'#993556',d:'5,3'}));
+LINKS.push({s:'l2m',t:'alecs',w:1.5,op:.4,c:'#854F0B',d:'5,3'});
+LINKS.push({s:'roa',t:'ota',w:2,op:.45,c:'#3B6D11',d:'6,3'});
+LINKS.push({s:'roa',t:'rgb',w:2,op:.45,c:'#3B6D11',d:'6,3'});
+LINKS.push({s:'roa',t:'l2m',w:2,op:.45,c:'#3B6D11',d:'6,3'});
+
+const W=()=>document.getElementById('canvas').clientWidth;
+const H=()=>document.getElementById('canvas').clientHeight;
+const svg=d3.select('#svg');
+const g=svg.append('g');
+const zoom=d3.zoom().scaleExtent([0.3,3]).on('zoom',e=>g.attr('transform',e.transform));
+svg.call(zoom);
+NODES.forEach(n=>{n.x=W()/2+(Math.random()-.5)*280;n.y=H()/2+(Math.random()-.5)*280;});
+const links=LINKS.map(l=>({...l,source:l.s,target:l.t}));
+const sim=d3.forceSimulation(NODES)
+  .force('link',d3.forceLink(links).id(d=>d.id).distance(95).strength(0.4))
+  .force('charge',d3.forceManyBody().strength(d=>d.hub?-600:-200))
+  .force('center',d3.forceCenter(W()/2,H()/2))
+  .force('collision',d3.forceCollide().radius(d=>d.r+14));
+const linkSel=g.append('g').selectAll('line').data(links).join('line')
+  .attr('stroke',d=>d.c).attr('stroke-width',d=>d.w)
+  .attr('stroke-opacity',d=>d.op).attr('stroke-dasharray',d=>d.d||null);
+const nodeSel=g.append('g').selectAll('g').data(NODES).join('g').style('cursor','pointer')
+  .call(d3.drag()
+    .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
+    .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y})
+    .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null}));
+nodeSel.append('circle').attr('r',d=>d.r).attr('fill',d=>d.color)
+  .attr('fill-opacity',d=>d.hub?.95:.78).attr('stroke',d=>d.color)
+  .attr('stroke-width',d=>d.hub?2.5:1.5).attr('stroke-opacity',d=>d.hub?1:.6);
+// Wrap label inside a hub circle, stepping down font sizes until it fits.
+function wrapHub(textEl, label, radius) {
+  const sizes = [9, 8, 7, 6.5, 6];
+  const maxW  = radius * 1.55;
+  const lineH = 1.25;
+  for (const sz of sizes) {
+    const charW        = sz * 0.52;
+    const charsPerLine = Math.max(1, Math.floor(maxW / charW));
+    const words = label.split(' ');
+    const lines = [];
+    let line = [];
+    for (const w of words) {
+      if ([...line, w].join(' ').length > charsPerLine && line.length > 0) {
+        lines.push(line.join(' ')); line = [w];
+      } else { line.push(w); }
+    }
+    if (line.length) lines.push(line.join(' '));
+    const longestChars = Math.max(...lines.map(l => l.length));
+    if (longestChars * charW <= maxW || sz === sizes[sizes.length - 1]) {
+      const totalH = (lines.length - 1) * sz * lineH;
+      lines.forEach((ln, i) => {
+        textEl.append('tspan')
+          .attr('x', 0)
+          .attr('dy', i === 0 ? (-totalH / 2) + 'px' : (sz * lineH) + 'px')
+          .text(ln);
+      });
+      textEl.attr('font-size', sz + 'px');
+      return;
+    }
+  }
+}
+
+// Wrap label below a non-hub circle.
+function wrapBelow(textEl, label, radius) {
+  const sz           = 9.5;
+  const charW        = sz * 0.52;
+  const maxW         = 72;
+  const lineH        = sz * 1.25;
+  const charsPerLine = Math.max(1, Math.floor(maxW / charW));
+  const words = label.split(' ');
+  const lines = [];
+  let line = [];
+  for (const w of words) {
+    if ([...line, w].join(' ').length > charsPerLine && line.length > 0) {
+      lines.push(line.join(' ')); line = [w];
+    } else { line.push(w); }
+  }
+  if (line.length) lines.push(line.join(' '));
+  lines.forEach((ln, i) => {
+    textEl.append('tspan')
+      .attr('x', 0)
+      .attr('dy', i === 0 ? (radius + 11) + 'px' : lineH + 'px')
+      .text(ln);
+  });
+  textEl.attr('font-size', sz + 'px');
+}
+
+nodeSel.filter(d=>d.hub).append('text').attr('text-anchor','middle')
+  .attr('font-family','DM Sans, sans-serif').attr('font-weight','500')
+  .attr('fill','#fff').attr('pointer-events','none')
+  .each(function(d) { wrapHub(d3.select(this), d.label, d.r); });
+nodeSel.filter(d=>!d.hub).append('text').attr('text-anchor','middle')
+  .attr('font-family','DM Sans, sans-serif')
+  .attr('fill','#5a6b62').attr('font-weight','300').attr('pointer-events','none')
+  .each(function(d) { wrapBelow(d3.select(this), d.label, d.r); });
+sim.on('tick',()=>{
+  linkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+  nodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);
+});
+let sel=null;
+const panel=document.getElementById('panel');
+nodeSel.on('click',function(event,d){
+  event.stopPropagation();
+  if(sel===d.id){reset();return;}
+  sel=d.id;
+  const conn=new Set([d.id]);
+  links.forEach(l=>{if(l.source.id===d.id)conn.add(l.target.id);if(l.target.id===d.id)conn.add(l.source.id);});
+  nodeSel.classed('node-dim',n=>!conn.has(n.id));
+  linkSel.attr('stroke-opacity',l=>conn.has(l.source.id)&&conn.has(l.target.id)?Math.min((l.op||.35)*2.8,.9):.04);
+  document.getElementById('p-tag').textContent=d.type;
+  document.getElementById('p-name').textContent=d.full||d.label;
+  document.getElementById('p-desc').textContent=d.desc;
+  document.getElementById('p-stats').innerHTML=`<div class="ps"><span class="ps-v">${conn.size-1}</span><span class="ps-l">connections</span></div>`+(d.members?`<div class="ps"><span class="ps-v">${d.members}</span><span class="ps-l">total members</span></div>`:'');
+  panel.classList.add('vis');
+});
+svg.on('click',reset);
+function reset(){sel=null;nodeSel.classed('node-dim',false);linkSel.attr('stroke-opacity',d=>d.op);panel.classList.remove('vis');}
+window.addEventListener('resize',()=>{sim.force('center',d3.forceCenter(W()/2,H()/2)).alpha(0.1).restart();});
+</script>
+</body>
+</html>
