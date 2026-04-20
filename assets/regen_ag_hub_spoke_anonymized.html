@@ -241,6 +241,51 @@ HUBS.forEach(h => {
   });
 });
 
+// ── spoke separation simulation ───────────────────────────────────────────────
+// Run a short force sim on all nodes to push overlapping spokes apart.
+// Hubs are pinned so they don't move. Collision radius includes estimated
+// label height below each spoke so labels don't stack on top of each other.
+
+const cx0 = W() / 2, cy0 = H() / 2;
+
+// Clone nodes for the sim so we don't mutate originals until settled
+const simNodes = allNodes.map(d => Object.assign({}, d));
+simNodes.forEach(sn => {
+  const orig = allNodes.find(n => n.id === sn.id);
+  if (orig.bc !== undefined) { sn.fx = orig.x; sn.fy = orig.y; } // pin hubs
+});
+
+const spokeLinks = links.map(l => ({
+  source: simNodes.find(n => n.id === l.s),
+  target: simNodes.find(n => n.id === l.t),
+  primary: l.primary
+}));
+
+// Collision radius: hub r + small gap; spoke r + label height estimate (2 lines)
+const collideR = d => d.bc !== undefined ? d.r + 4 : d.r + 30;
+
+const presim = d3.forceSimulation(simNodes)
+  .force('collide', d3.forceCollide().radius(collideR).strength(0.9).iterations(5))
+  .force('link', d3.forceLink(spokeLinks)
+    .strength(d => d.primary ? 0.12 : 0.04)
+    .distance(() => 300))
+  // gentle pull to keep spokes on the outer ring, not drifting inward
+  .force('r', d3.forceRadial(
+    d => d.bc !== undefined ? 0 : 300,
+    cx0, cy0
+  ).strength(d => d.bc !== undefined ? 0 : 0.1))
+  .stop();
+
+for (let i = 0; i < 300; i++) presim.tick();
+
+// Write settled positions back to real node objects (spokes only)
+simNodes.forEach(sn => {
+  if (sn.bc === undefined) {
+    const real = allNodes.find(n => n.id === sn.id);
+    if (real) { real.x = sn.x; real.y = sn.y; }
+  }
+});
+
 // ── render ───────────────────────────────────────────────────────────────────
 
 const linkSel = g.append('g').selectAll('line').data(links).join('line')
