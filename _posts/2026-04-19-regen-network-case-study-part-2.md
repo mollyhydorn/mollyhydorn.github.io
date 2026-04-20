@@ -124,16 +124,6 @@ The current network is a hypothesis about the ecosystem's structure. Survey data
 
 ---
 
-### Why Anonymization Is a Methodological Choice
-
-The anonymized maps presented here replace organization names with role-based labels: Coalition Hub A, Brand Member 3, Cross-Coalition Connector. This wasn't a compromise. It was a deliberate framing decision.
-
-Network analysis of real organizations involves real relationships, some of which are sensitive. Publishing a map that surfaces structural chokepoints, isolated actors, or unexpected bridging positions by name raises questions about consent and context that a portfolio piece can't fully resolve. The anonymized versions preserve the structural findings while keeping the focus on method and insight rather than organizational intelligence.
-
-They also make a useful point: the analytical value of this work doesn't depend on knowing which specific organization occupies which position. The structure is the finding.
-
----
-
 ### From Map to Strategy
 
 Ecosystem maps become useful when they inform decisions. A few implications that follow directly from the network analysis:
@@ -150,6 +140,6 @@ For **intermediary organizations** like Why Regenerative, the structural gap bet
 
 This network reflects coalition memberships as of early 2026. It is a snapshot built from what is publicly observable, which means it is incomplete by definition.
 
-The next phase of this work is not yet to watch the ecosystem move. It is to make sure we are looking at it accurately in the first place. That means investing in primary data collection: surveying organizations directly, validating relationships, and surfacing the informal and regional connections that secondary research leaves invisible.
+The next phase of this work is to make sure we are looking at it accurately in the first place. That means investing in primary data collection: surveying organizations directly, validating relationships, and surfacing the informal and regional connections that secondary research leaves invisible.
 
 Once the map is accurate, it becomes something worth maintaining. And a maintained, validated ecosystem map, updated over time as coalitions shift, capital flows, and actors enter and exit the space, becomes something the regenerative agriculture field currently doesn't have: a living picture of how the system actually holds together.
