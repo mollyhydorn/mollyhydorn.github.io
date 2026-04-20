@@ -1,0 +1,46 @@
+<svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" role="img" width="100%" style="max-width:500px;display:block;">
+  <title>Landscape connectivity</title>
+  <desc>Donut chart showing 578 connected organizations (18%) versus 2,680 unconnected (82%) out of 3,258 total mapped.</desc>
+
+  <style>
+    .label-main { font: 500 28px system-ui, sans-serif; fill: #1a1a18; }
+    .label-sub  { font: 400 11px system-ui, sans-serif; fill: #73726c; }
+    .label-cat  { font: 400 12px system-ui, sans-serif; fill: #73726c; }
+    .label-total-n { font: 500 18px system-ui, sans-serif; fill: #1a1a18; }
+    .label-total-l { font: 400 10px system-ui, sans-serif; fill: #73726c; letter-spacing: 0.05em; }
+    .swatch { rx: 2; }
+  </style>
+
+  <circle cx="110" cy="110" r="90"
+    fill="none"
+    stroke="#B4B2A9"
+    stroke-width="36"
+    stroke-dasharray="463.7 101.8"
+    stroke-dashoffset="0"
+    transform="rotate(-90 110 110)" />
+
+  <circle cx="110" cy="110" r="90"
+    fill="none"
+    stroke="#1D9E75"
+    stroke-width="36"
+    stroke-dasharray="101.8 463.7"
+    stroke-dashoffset="0"
+    transform="rotate(-90 110 110)" />
+
+  <text x="110" y="104" text-anchor="middle" class="label-main">18%</text>
+  <text x="110" y="122" text-anchor="middle" class="label-sub">connected</text>
+
+  <rect x="240" y="28" width="10" height="10" fill="#1D9E75" class="swatch"/>
+  <text x="256" y="38" class="label-cat">Connected to the network</text>
+  <text x="240" y="72" class="label-main">578</text>
+  <text x="240" y="88" class="label-sub">18% of landscape</text>
+
+  <rect x="240" y="112" width="10" height="10" fill="#B4B2A9" class="swatch"/>
+  <text x="256" y="122" class="label-cat">No logged connections</text>
+  <text x="240" y="156" class="label-main">2,680</text>
+  <text x="240" y="172" class="label-sub">82% of landscape</text>
+
+  <line x1="240" y1="186" x2="500" y2="186" stroke="#d3d1c7" stroke-width="0.5"/>
+  <text x="240" y="198" class="label-total-l">TOTAL ORGANIZATIONS MAPPED</text>
+  <text x="240" y="214" class="label-total-n">3,258</text>
+</svg>

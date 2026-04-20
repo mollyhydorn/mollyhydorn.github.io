@@ -40,7 +40,7 @@ The result was a network of 578 connected organizations, anchored by 13 coalitio
 
 ### What the Structure Shows
 
-The network is a hub-and-spoke system. Thirteen coalitions act as the connective tissue of the ecosystem, and most organizations relate to the broader network only through membership in one of them. This has real implications: the coalitions aren't just convening bodies, they are the infrastructure. Remove them and the network fragments significantly.
+The network is a hub-and-spoke system. Thirteen coalitions act as the connective tissue of the ecosystem, and organizations relate to the broader network through membership in one of them. This has real implications: the coalitions aren't just convening bodies, they are the infrastructure. Remove them and the network fragments significantly.
 
 A few findings stood out.
 
@@ -50,7 +50,11 @@ A few findings stood out.
 
 **The largest players are not always the most structurally important.** Conventional market logic would suggest that the biggest brands or most-capitalized investors are the most influential actors. Network logic often disagrees. Structural influence is a function of position, not size, and some mid-sized organizations occupy bridging positions that give them outsized leverage in how information, capital, and relationships flow through the ecosystem.
 
-**Most of the landscape remains unconnected.** The 578-node connected component is embedded in a landscape of 3,000-plus organizations, the majority of which have no logged connections to anyone else. This isn't a failure of the database. It reflects the actual state of the ecosystem: a large share of farms, regional investors, and emerging technology companies operate without formal ties to the coalitions and networks that structure the space at scale.
+**Most of the landscape remains unconnected.** The 578-node connected component is embedded in a landscape of 3,000-plus organizations, the majority of which have no logged connections to anyone else. This isn't a failure of the database. It reflects the actual state of the ecosystem: a large share of farms, regional investors, and emerging technology companies operate without public formal ties to the coalitions and networks that structure the space at scale.
+<figure style="margin: 32px 0;">
+  <img src="/assets/landscape-connectivity-donut.svg" alt="82% of mapped organizations have no logged network connections" style="max-width: 500px; width: 100%;">
+  <figcaption style="font-size: 13px; color: #888; margin-top: 8px;">Of 3,258 organizations in the landscape database, only 578 have logged connections to the coalition network.</figcaption>
+</figure>
 
 ---
 
@@ -130,9 +134,9 @@ Ecosystem maps become useful when they inform decisions. A few implications that
 
 For **investors and funders**, the most underleveraged opportunity may not be in the connected core but at the edges, where regional farms and emerging technology companies sit outside the coalition structure entirely and have no current path into the networks that move capital.
 
-For **brands and buyers**, cross-coalition membership is a signal worth tracking. The brands that span multiple coalitions are building durable ecosystem relationships rather than single-standard compliance. That positioning tends to correlate with more sophisticated supply chain development.
+For **brands and buyers**, cross-coalition membership is a signal worth tracking. The brands that span multiple coalitions are building durable ecosystem relationships rather than single-standard compliance. They are also the most visible nodes in the network, making them easier to identify as potential partners, customers, or collaborators.
 
-For **intermediary organizations** like Why Regenerative, the structural gap between the fiber and apparel world and the food system world is a concrete program opportunity. Convening across that gap, or developing shared frameworks that create bridges, addresses a real architectural need rather than adding another node to an already dense hub.
+For **intermediary organizations** like Why Regenerative, the structural gap between the fiber and apparel world and the food system world points to a concrete activation opportunity. ROC already spans both communities as a shared certification standard, but the brands holding ROC certification on the food side and those holding it on the fiber side have limited structural overlap and few shared relationships. A cross-sector brand cohort convening ROC-certified food and fiber brands around shared supply chain development, co-marketing, or advocacy would activate the connections that a shared standard implies but hasn't yet produced.
 
 ---
 
