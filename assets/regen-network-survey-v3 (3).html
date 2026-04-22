@@ -1,0 +1,586 @@
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  #wr-survey-root * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  #wr-survey-root {
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+    background: #fff;
+    color: #000;
+    width: 100%;
+    padding: 60px 24px 80px;
+  }
+
+  .wr-inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .wr-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #019a51;
+    margin-bottom: 16px;
+  }
+
+  .wr-title {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    color: #000;
+  }
+
+  .wr-subtitle {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 48px;
+    max-width: 480px;
+  }
+
+  .wr-divider {
+    height: 1px;
+    background: #e5e5e5;
+    margin: 32px 0;
+  }
+
+  .wr-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 20px;
+  }
+
+  .wr-field-group { margin-bottom: 18px; }
+  .wr-field-group:last-child { margin-bottom: 0; }
+
+  .wr-field-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #777;
+    margin-bottom: 8px;
+  }
+
+  .wr-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  #wr-survey-root input[type="text"],
+  #wr-survey-root input[type="email"] {
+    width: 100%;
+    background: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    padding: 12px 14px;
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+    font-size: 14px;
+    color: #000;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+
+  #wr-survey-root input[type="text"]:focus,
+  #wr-survey-root input[type="email"]:focus {
+    border-color: #019a51;
+    background: #fff;
+  }
+
+  #wr-survey-root input[type="text"]::placeholder,
+  #wr-survey-root input[type="email"]::placeholder {
+    color: #bbb;
+  }
+
+  .wr-pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .wr-pill {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    color: #888;
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.12s;
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+  }
+
+  .wr-pill:hover {
+    border-color: #019a51;
+    color: #019a51;
+  }
+
+  .wr-pill.active {
+    border-color: #019a51;
+    color: #fff;
+    background: #019a51;
+  }
+
+  .wr-org-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .wr-org-entry {
+    border: 1px solid #e5e5e5;
+    padding: 16px;
+    animation: wrSlideIn 0.18s ease;
+  }
+
+  @keyframes wrSlideIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .wr-org-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .wr-org-num {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #aaa;
+  }
+
+  .wr-remove {
+    font-size: 18px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #ccc;
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.12s;
+  }
+
+  .wr-remove:hover { color: #000; }
+
+  .wr-org-name-input {
+    width: 100%;
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    padding: 10px 12px;
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+    font-size: 13px;
+    color: #000;
+    outline: none;
+    margin-bottom: 10px;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+
+  .wr-org-name-input:focus { border-color: #019a51; background: #fff; }
+  .wr-org-name-input::placeholder { color: #bbb; }
+
+  .wr-rel-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .wr-rel-pill {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    color: #aaa;
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.12s;
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+  }
+
+  .wr-rel-pill:hover { border-color: #019a51; color: #019a51; }
+
+  .wr-rel-pill.active {
+    border-color: #019a51;
+    color: #fff;
+    background: #019a51;
+  }
+
+  .wr-add-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 13px;
+    background: transparent;
+    border: 1px dashed #ccc;
+    color: #aaa;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .wr-add-btn:hover {
+    border-color: #019a51;
+    color: #019a51;
+  }
+
+  #wr-survey-root textarea {
+    width: 100%;
+    background: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 12px 14px;
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+    font-size: 13px;
+    color: #000;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+
+  #wr-survey-root textarea:focus { border-color: #019a51; background: #fff; }
+  #wr-survey-root textarea::placeholder { color: #bbb; }
+
+  .wr-submit-btn {
+    margin-top: 36px;
+    width: 100%;
+    padding: 16px;
+    background: #019a51;
+    border: none;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+    transition: background 0.15s;
+  }
+
+  .wr-submit-btn:hover { background: #017a41; }
+  .wr-submit-btn:active { background: #016035; }
+  .wr-submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+  .wr-submit-note {
+    font-size: 11px;
+    color: #aaa;
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+  }
+
+  .wr-error {
+    font-size: 11px;
+    color: #c0392b;
+    letter-spacing: 0.05em;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .wr-required { color: #019a51; margin-left: 2px; }
+
+  .wr-success {
+    display: none;
+    text-align: center;
+    padding: 80px 24px;
+  }
+
+  .wr-success-mark {
+    width: 48px;
+    height: 48px;
+    border: 2px solid #019a51;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 20px;
+    color: #019a51;
+  }
+
+  .wr-success-title {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+    color: #000;
+  }
+
+  .wr-success-sub {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.7;
+  }
+
+  .wr-other-input {
+    display: none;
+    margin-top: 8px;
+    width: 100%;
+    background: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 10px 14px;
+    font-family: 'Avenir Next', 'Avenir', 'Nunito', sans-serif;
+    font-size: 13px;
+    color: #000;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+
+  .wr-other-input:focus { border-color: #019a51; background: #fff; }
+  .wr-other-input::placeholder { color: #bbb; }
+  .wr-other-input.visible { display: block; }
+
+  @media (max-width: 480px) {
+    .wr-two-col { grid-template-columns: 1fr; }
+    #wr-survey-root { padding: 40px 16px 60px; }
+  }
+</style>
+
+<div id="wr-survey-root">
+  <div class="wr-inner">
+
+    <div id="wr-form">
+      <p class="wr-eyebrow">Why Regenerative</p>
+      <h1 class="wr-title">Ecosystem<br>Network Survey</h1>
+      <p class="wr-subtitle">Help us map the relationships that hold this ecosystem together. 2&ndash;3 minutes.</p>
+
+      <div class="wr-section-label">About you</div>
+
+      <div class="wr-two-col wr-field-group">
+        <div>
+          <label class="wr-field-label">Name <span class="wr-required">*</span></label>
+          <input type="text" id="wr-name" placeholder="First Last" />
+        </div>
+        <div>
+          <label class="wr-field-label">Organization <span class="wr-required">*</span></label>
+          <input type="text" id="wr-org" placeholder="Org name" />
+        </div>
+      </div>
+
+      <div class="wr-field-group">
+        <label class="wr-field-label">Website <span style="color:#bbb; font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
+        <input type="text" id="wr-website" placeholder="yourorg.com" />
+      </div>
+
+      <div class="wr-field-group">
+        <label class="wr-field-label">Email <span style="color:#bbb; font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">(optional &mdash; for follow-up only)</span></label>
+        <input type="email" id="wr-email" placeholder="you@org.com" />
+      </div>
+
+      <div class="wr-field-group">
+        <label class="wr-field-label">Organization type <span class="wr-required">*</span></label>
+        <div class="wr-pill-grid" id="wr-type-pills">
+          <span class="wr-pill" data-value="Farm / producer">Farm / producer</span>
+          <span class="wr-pill" data-value="Brand / buyer">Brand / buyer</span>
+          <span class="wr-pill" data-value="Funder / investor">Funder / investor</span>
+          <span class="wr-pill" data-value="AgTech / tools">AgTech / tools</span>
+          <span class="wr-pill" data-value="NGO / advocacy">NGO / advocacy</span>
+          <span class="wr-pill" data-value="Research / certification">Research / certification</span>
+          <span class="wr-pill" data-value="Other">Other</span>
+        </div>
+        <input type="text" class="wr-other-input" id="wr-type-other" placeholder="Please specify..." />
+      </div>
+
+      <div class="wr-field-group">
+        <label class="wr-field-label">Certifications held</label>
+        <div class="wr-pill-grid" id="wr-cert-pills">
+          <span class="wr-pill" data-value="ROC">ROC</span>
+          <span class="wr-pill" data-value="Regenified">Regenified</span>
+          <span class="wr-pill" data-value="Rainforest Alliance">Rainforest Alliance</span>
+          <span class="wr-pill" data-value="USDA Organic">USDA Organic</span>
+          <span class="wr-pill" data-value="Land to Market">Land to Market</span>
+          <span class="wr-pill" data-value="None">None</span>
+          <span class="wr-pill" data-value="Other">Other</span>
+        </div>
+        <input type="text" class="wr-other-input" id="wr-cert-other" placeholder="Please specify..." />
+      </div>
+
+      <div class="wr-divider"></div>
+
+      <div class="wr-section-label">Organizations you work with</div>
+      <p style="font-size:12px; color:#888; margin-bottom:20px; line-height:1.6;">For each org, enter the name and select the relationship type(s). Include farms, funders, brands, partners, buyers, co-investors &mdash; anyone you actively work with.</p>
+
+      <div class="wr-org-entries" id="wr-org-entries"></div>
+
+      <button class="wr-add-btn" onclick="wrAddOrg()">+ Add organization</button>
+
+      <div class="wr-divider"></div>
+
+      <div class="wr-section-label">Anything else?</div>
+      <textarea id="wr-notes" placeholder="Emerging collaborations, gaps you're seeing, orgs we should know about..."></textarea>
+
+      <p class="wr-error" id="wr-error">Please fill in your name, organization, and type before submitting.</p>
+
+      <button class="wr-submit-btn" id="wr-submit-btn" onclick="wrSubmit()">Submit Response</button>
+      <p class="wr-submit-note">Data used only for ecosystem mapping research by Why Regenerative.</p>
+    </div>
+
+    <div class="wr-success" id="wr-success">
+      <div class="wr-success-mark">&#10003;</div>
+      <h2 class="wr-success-title">Thank you.</h2>
+      <p class="wr-success-sub">Your response has been recorded.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  var REL_TYPES = [
+    'Commercial / supply chain',
+    'Investment / funding',
+    'Formal partnership',
+    'Advisory / board',
+    'Research / data sharing',
+    'Informal collaboration'
+  ];
+
+  var orgCount = 0;
+
+  // Toggle pills and show/hide Other input when Other is selected
+  function setupPillGroup(containerId, otherInputId) {
+    var container = document.getElementById(containerId);
+    var otherInput = document.getElementById(otherInputId);
+    container.querySelectorAll('.wr-pill').forEach(function(p) {
+      p.addEventListener('click', function() {
+        p.classList.toggle('active');
+        if (otherInput) {
+          var otherActive = container.querySelector('.wr-pill[data-value="Other"]').classList.contains('active');
+          otherInput.classList.toggle('visible', otherActive);
+          if (otherActive) otherInput.focus();
+        }
+      });
+    });
+  }
+
+  setupPillGroup('wr-type-pills', 'wr-type-other');
+  setupPillGroup('wr-cert-pills', 'wr-cert-other');
+
+  window.wrAddOrg = function() {
+    orgCount++;
+    var id = orgCount;
+    var container = document.getElementById('wr-org-entries');
+    var entry = document.createElement('div');
+    entry.className = 'wr-org-entry';
+    entry.id = 'wr-entry-' + id;
+
+    var pills = REL_TYPES.map(function(r) {
+      return '<span class="wr-rel-pill" data-value="' + r + '" onclick="wrToggleRel(this)">' + r + '</span>';
+    }).join('');
+
+    entry.innerHTML =
+      '<div class="wr-org-header">' +
+        '<span class="wr-org-num">Organization ' + id + '</span>' +
+        '<button class="wr-remove" onclick="wrRemove(' + id + ')" title="Remove">&times;</button>' +
+      '</div>' +
+      '<input class="wr-org-name-input" type="text" placeholder="Organization name" />' +
+      '<div class="wr-rel-pills">' + pills + '</div>';
+
+    var input = entry.querySelector('input');
+    input.addEventListener('focus', function() { input.style.borderColor = '#019a51'; input.style.background = '#fff'; });
+    input.addEventListener('blur', function() { input.style.borderColor = '#e0e0e0'; input.style.background = '#f7f7f7'; });
+
+    container.appendChild(entry);
+    input.focus();
+  };
+
+  window.wrRemove = function(id) {
+    var el = document.getElementById('wr-entry-' + id);
+    if (el) el.remove();
+  };
+
+  window.wrToggleRel = function(el) {
+    el.classList.toggle('active');
+  };
+
+  function getSelected(containerId, otherInputId) {
+    var vals = Array.from(document.querySelectorAll('#' + containerId + ' .wr-pill.active'))
+      .map(function(p) { return p.dataset.value; });
+    if (otherInputId && vals.includes('Other')) {
+      var otherVal = document.getElementById(otherInputId).value.trim();
+      if (otherVal) vals = vals.map(function(v) { return v === 'Other' ? 'Other: ' + otherVal : v; });
+    }
+    return vals;
+  }
+
+  function collectOrgs() {
+    return Array.from(document.querySelectorAll('.wr-org-entry')).map(function(entry) {
+      var name = entry.querySelector('input').value.trim();
+      var rels = Array.from(entry.querySelectorAll('.wr-rel-pill.active')).map(function(p) { return p.dataset.value; });
+      return { org: name, relationships: rels };
+    }).filter(function(e) { return e.org; });
+  }
+
+  window.wrSubmit = async function() {
+    var name = document.getElementById('wr-name').value.trim();
+    var org = document.getElementById('wr-org').value.trim();
+    var orgType = getSelected('wr-type-pills', 'wr-type-other');
+    var errEl = document.getElementById('wr-error');
+
+    if (!name || !org || orgType.length === 0) {
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+
+    var payload = {
+      respondentName: name,
+      respondentOrg: org,
+      respondentEmail: document.getElementById('wr-email').value.trim(),
+      respondentWebsite: document.getElementById('wr-website').value.trim(),
+      orgType: orgType.join(', '),
+      certifications: getSelected('wr-cert-pills', 'wr-cert-other').join(', '),
+      connections: collectOrgs(),
+      notes: document.getElementById('wr-notes').value.trim(),
+      submittedAt: new Date().toISOString()
+    };
+
+    var btn = document.getElementById('wr-submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    try {
+      var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5T43lFncbScpqUQMkJrDtNSb1PRPHjtRSIvILVdK6DwnAlfK2UYyZ5hL9Ew5xDeBV/exec';
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      document.getElementById('wr-form').style.display = 'none';
+      document.getElementById('wr-success').style.display = 'block';
+    } catch(err) {
+      btn.disabled = false;
+      btn.textContent = 'Submit Response';
+      alert('Something went wrong. Please try again or find Molly to submit in person.');
+    }
+  };
+
+  wrAddOrg();
+})();
+</script>
