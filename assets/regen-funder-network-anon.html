@@ -3,177 +3,436 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Regenerative Agriculture — Funder Network</title>
+<title>Regenerative Agriculture — Funder Network (Illustrative)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap');
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
-    --green-mid: #0F6E56; --ink: #1c2420; --muted: #5a6b62;
-    --border: rgba(15,110,86,0.15); --panel-bg: rgba(255,255,255,0.97); --bg: #f5f3ee;
+    --green-dark: #1a3a2a;
+    --green-mid: #0F6E56;
+    --green-light: #e8f2ee;
+    --ink: #1c2420;
+    --muted: #5a6b62;
+    --border: rgba(15,110,86,0.15);
+    --panel-bg: rgba(255,255,255,0.97);
+    --bg: #f5f3ee;
   }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-  header { padding: 16px 24px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 16px; background: var(--bg); flex-shrink: 0; }
-  header h1 { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); letter-spacing: -0.02em; }
-  header p { font-size: 13px; color: var(--muted); font-weight: 300; }
-  header .stats { margin-left: auto; display: flex; gap: 24px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  header {
+    padding: 16px 24px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+
+  header p {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  header .stats {
+    margin-left: auto;
+    display: flex;
+    gap: 24px;
+  }
+
   .stat { text-align: right; }
   .stat-v { font-size: 18px; font-weight: 500; color: var(--green-mid); display: block; }
   .stat-l { font-size: 11px; color: var(--muted); }
-  #canvas { flex: 1; position: relative; overflow: hidden; }
+
+  #canvas {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
   svg { width: 100%; height: 100%; }
-  #panel { position: absolute; top: 16px; right: 16px; width: 228px; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; opacity: 0; pointer-events: none; transition: opacity 0.2s; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+
+  #panel {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 228px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+
   #panel.vis { opacity: 1; pointer-events: auto; }
-  #p-tag { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green-mid); margin-bottom: 5px; }
-  #p-name { font-family: 'DM Serif Display', serif; font-size: 16px; font-weight: 400; color: var(--ink); line-height: 1.3; margin-bottom: 8px; }
-  #p-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 10px; font-weight: 300; }
-  #p-stats { display: flex; gap: 16px; padding-top: 10px; border-top: 1px solid var(--border); }
+
+  #p-tag {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--green-mid);
+    margin-bottom: 5px;
+  }
+
+  #p-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  #p-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-weight: 300;
+  }
+
+  #p-stats {
+    display: flex;
+    gap: 16px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .ps { }
   .ps-v { font-size: 17px; font-weight: 500; color: var(--ink); display: block; }
   .ps-l { font-size: 10px; color: var(--muted); }
-  #legend { position: absolute; bottom: 16px; left: 16px; display: flex; flex-direction: column; gap: 5px; }
-  .leg { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
-  .leg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-  .leg-line { width: 18px; height: 2px; flex-shrink: 0; }
-  #hint { position: absolute; bottom: 16px; right: 16px; font-size: 11px; color: var(--muted); font-weight: 300; }
+
+  #legend {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .leg {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .leg-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .leg-line {
+    width: 18px;
+    height: 2px;
+    flex-shrink: 0;
+  }
+
+  #hint {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
   .node-dim { opacity: 0.1; }
 </style>
 </head>
 <body>
+
 <header>
-  <h1>Funder Network</h1>
+  <h1>Funder Network (Illustrative)</h1>
   <p>Regenerative Agriculture Ecosystem · Philanthropic &amp; Impact Finance</p>
   <div class="stats">
-    <div class="stat"><span class="stat-v">60+</span><span class="stat-l">coalition members</span></div>
-    <div class="stat"><span class="stat-v">29</span><span class="stat-l">bilateral investments</span></div>
+    <div class="stat"><span class="stat-v">60</span><span class="stat-l">FORA members</span></div>
+    <div class="stat"><span class="stat-v">11</span><span class="stat-l">bilateral investments</span></div>
   </div>
 </header>
+
 <div id="canvas">
   <svg id="svg"></svg>
+
   <div id="panel">
     <div id="p-tag"></div>
     <div id="p-name"></div>
     <div id="p-desc"></div>
     <div id="p-stats"></div>
   </div>
+
   <div id="legend">
-    <div class="leg"><div class="leg-dot" style="background:#0F6E56"></div>Funder coalition hub</div>
+    <div class="leg"><div class="leg-dot" style="background:#0F6E56"></div>FORA coalition hub</div>
     <div class="leg"><div class="leg-dot" style="background:#185FA5"></div>Foundation / philanthropy</div>
     <div class="leg"><div class="leg-dot" style="background:#854F0B"></div>Investment fund / vehicle</div>
     <div class="leg"><div class="leg-dot" style="background:#3B6D11"></div>Research / NGO / network</div>
     <div class="leg"><div class="leg-dot" style="background:#888780"></div>Corporate investor</div>
-    <div class="leg"><div class="leg-line" style="background:#0F6E56;opacity:0.5"></div>Coalition membership</div>
-    <div class="leg"><div class="leg-line" style="background:repeating-linear-gradient(90deg,#854F0B 0,#854F0B 4px,transparent 4px,transparent 7px)"></div>Co-investment / partnership</div>
+    <div class="leg">
+      <div class="leg-line" style="background:#0F6E56;opacity:0.5"></div>
+      Coalition membership
+    </div>
+    <div class="leg">
+      <div class="leg-line" style="background:#854F0B;opacity:0.6;background:repeating-linear-gradient(90deg,#854F0B 0,#854F0B 4px,transparent 4px,transparent 7px)"></div>
+      Co-investment / partnership
+    </div>
   </div>
+
   <div id="hint">click any node to explore · scroll to zoom · drag to pan</div>
 </div>
+
 <script>
 const NODES = [
-  {id:'fora',    label:'Funder Coalition A', full:'Funder Coalition A',                    color:'#0F6E56', r:30, hub:true, type:'Coalition hub',         desc:'Convening body for 60+ philanthropic and impact finance organizations. Coordinates capital deployment into regenerative agriculture across foundations, family offices, impact funds, and development finance institutions.',    connections:27},
-  {id:'rock',    label:'Major Foundation A', full:'Major Foundation A',                    color:'#185FA5', r:13, type:'Major foundation',      desc:'Large philanthropic foundation with 5 documented co-investments in the regenerative agriculture field. One of the highest-degree nodes in the funder cluster — central to multiple capital flow pathways.', connections:5},
-  {id:'walton',  label:'Family Foundation A',full:'Family Foundation A',                   color:'#185FA5', r:11, type:'Family foundation',     desc:'Conservation-focused family foundation. Co-investor in a regenerative finance coalition alongside Major Foundation A.', connections:2},
-  {id:'tomkat',  label:'Ranch Foundation A', full:'Ranch Foundation A',                    color:'#185FA5', r:10, type:'Family foundation',     desc:'Ranch-based educational foundation. Coalition member focused on regenerative agriculture and food systems transformation.', connections:1},
-  {id:'mcknight',label:'Regional Foundation A',full:'Regional Foundation A',               color:'#185FA5', r:10, type:'Major foundation',      desc:'Regional foundation. Coalition member and Midwest food systems funder focused on sustainable and regenerative agricultural practices.', connections:1},
-  {id:'11th',    label:'Philanthropic Project A',full:'Philanthropic Project A',           color:'#185FA5', r:9,  type:'Philanthropic project', desc:'Coalition member. Supports organizations working on food systems transformation, soil health, and climate-resilient agriculture.', connections:1},
-  {id:'baszucki',label:'Family Philanthropy A',full:'Family Philanthropy A',               color:'#185FA5', r:8,  type:'Family philanthropy',  desc:'Coalition member. Philanthropic arm supporting regenerative food systems and soil health initiatives.', connections:1},
-  {id:'builders',label:'Impact Platform A',  full:'Impact Platform A',                    color:'#185FA5', r:9,  type:'Philanthropy / investment', desc:'Philanthropic and investment platform. Co-investor in a regenerative agriculture lending fund alongside Major Foundation A. Coalition member.', connections:2},
-  {id:'cisco',   label:'Corporate Foundation A',full:'Corporate Foundation A',             color:'#888780', r:11, type:'Corporate foundation', desc:'Corporate foundation with a $100M / 10-year commitment to regenerative agriculture. 4 documented co-investments in regen ag platforms and smallholder farmer support organizations.', connections:4},
-  {id:'msft',    label:'Technology Co. A',   full:'Technology Co. A',                     color:'#888780', r:11, type:'Corporate investor',   desc:'Significant co-investor in soil carbon markets. Three documented deals: a multi-year soil carbon purchase agreement, a carbon credit partnership, and a farmland investment vehicle.', connections:3},
-  {id:'mad',     label:'Impact Fund A',      full:'Impact Fund A',                        color:'#0F6E56', r:11, type:'Impact fund',           desc:'Regenerative agriculture lending fund and coalition member. Received co-investments from Major Foundation A, Impact Platform A, and Corporate Foundation A. Provides transition financing to regen producers.', connections:4},
-  {id:'iroquois',label:'Farmland REIT A',    full:'Farmland REIT A',                      color:'#0F6E56', r:10, type:'Farmland REIT',         desc:'Farmland real estate investment trust providing organic transition financing to independent farmers. Coalition member.', connections:1},
-  {id:'trailhead',label:'Impact Fund B',     full:'Impact Fund B',                        color:'#0F6E56', r:9,  type:'Impact fund',           desc:'Impact investing firm focused on regenerative agriculture. Coalition member.', connections:1},
-  {id:'rsf',     label:'Social Finance A',   full:'Social Finance Organization A',        color:'#0F6E56', r:9,  type:'Social finance',        desc:'Community development finance organization providing loans, investments, and grants. Coalition member.', connections:1},
-  {id:'steward', label:'Lending Platform A', full:'Lending Platform A',                   color:'#0F6E56', r:9,  type:'Lending platform',      desc:'Direct-to-farmer lending platform providing accessible capital to regenerative producers. Coalition member.', connections:1},
-  {id:'nest',    label:'Family Office A',    full:'Family Office A',                      color:'#0F6E56', r:8,  type:'Family office',         desc:'Family office focused on regenerative agriculture impact investing. Coalition member.', connections:1},
-  {id:'macdoch', label:'Int\'l Foundation A',full:'International Foundation A',           color:'#0F6E56', r:8,  type:'Family foundation',     desc:'International family foundation. Coalition member and co-investor in a large regenerative farmland fund in the Southern Hemisphere.', connections:2},
-  {id:'safsf',   label:'Funder Network A',   full:'Funder Peer Network A',                color:'#3B6D11', r:9,  type:'Funder network',        desc:'Peer learning network for food systems philanthropists. Coalition member providing coordination and knowledge-sharing across the philanthropic ecosystem.', connections:1},
-  {id:'gafof',   label:'Global Alliance A',  full:'Global Philanthropic Alliance A',      color:'#3B6D11', r:8,  type:'Philanthropic alliance',desc:'Global philanthropic alliance for food systems transformation. Coalition member with broad international funder network.', connections:1},
-  {id:'naturevest',label:'Conservation Finance A',full:'Conservation Finance Arm A',      color:'#3B6D11', r:9,  type:'Conservation finance',  desc:'Impact investing arm of a major conservation organization. Coalition member channeling conservation finance into regenerative and nature-positive agriculture.', connections:1},
-  {id:'tikehau', label:'Asset Manager A',    full:'Asset Manager A',                      color:'#854F0B', r:11, type:'Asset manager',         desc:'Dedicated regenerative agriculture investment strategy exceeding €500M. Co-invested in an agricultural input platform. One of the largest dedicated regenerative agriculture investment vehicles globally.', connections:2},
-  {id:'transcap',label:'Finance Coalition A',full:'Finance Coalition A',                  color:'#854F0B', r:10, type:'Finance coalition',     desc:'Transition finance coalition connecting 20+ organizations. Co-investments from Major Foundation A and Family Foundation A. High betweenness centrality — bridges the philanthropic and corporate clusters.', connections:3},
-  {id:'farmlandlp',label:'Farmland Fund A',  full:'Farmland Fund A',                      color:'#854F0B', r:10, type:'Farmland fund',         desc:'Converts conventional farmland to certified organic production. Co-investments from Technology Co. A and a specialist agricultural finance firm. Trade association member.', connections:3},
-  {id:'mirova',  label:'Asset Manager B',    full:'Asset Manager B',                      color:'#854F0B', r:10, type:'Asset manager',         desc:'Regenerative agriculture fund exceeding €350M. Formal partnership with a leading global certification body across three continents.', connections:1},
-  {id:'madmkt',  label:'Regen Trading Co. A',full:'Regenerative Trading Co. A',           color:'#854F0B', r:8,  type:'PBC / trading',         desc:'Regenerative commodity trading platform structured as a public benefit corporation. Co-investments in a seed company and a regenerative capital fund.', connections:2},
-  {id:'yale',    label:'Research Institution A',full:'Research Institution A',            color:'#3B6D11', r:10, type:'Academic / research',   desc:'University research center focused on business and environment. Co-investment from Major Foundation A. Founding partner of a conservation finance practitioner network.', connections:2},
-  {id:'fmo',     label:'Dev. Finance Inst. A',full:'Development Finance Institution A',   color:'#854F0B', r:8,  type:'Development finance',   desc:'Development finance institution. $35M first-loss financing to an agroforestry transition fund for smallholder farmers in tropical regions.', connections:1},
-  {id:'healing', label:'Soil Foundation A',  full:'Soil Health Foundation A',             color:'#3B6D11', r:7,  type:'Foundation',            desc:'Soil health-focused philanthropic foundation. Coalition member.', connections:1},
-  {id:'fractal', label:'AgTech Co. A',       full:'AgTech Company A',                     color:'#888780', r:7,  type:'AgTech',                desc:'Regenerative agriculture technology platform. Received co-investment from Corporate Foundation A.', connections:1},
-  {id:'indigo',  label:'AgTech Co. B',       full:'AgTech Company B',                     color:'#888780', r:8,  type:'AgTech',                desc:'Soil carbon and regenerative grain platform. Co-investment from Technology Co. A (multi-year soil carbon purchase agreement covering millions of tonnes).', connections:1},
+  // ── Hub ──────────────────────────────────────────────────────────────────────
+  {id:'fora',      label:'Funder Coalition A',      full:'Funder Coalition A',                           color:'#0F6E56', r:30, hub:true, type:'Coalition hub',         desc:'Convening body for 60 philanthropic and impact finance organizations. Coordinates capital deployment into regenerative agriculture across foundations, family offices, impact funds, and development finance institutions.', connections:60},
+  // ── Major foundations ────────────────────────────────────────────────────────
+  {id:'rock',      label:'Major Foundation A',      full:'Major Foundation A',                           color:'#185FA5', r:13, type:'Major foundation',       desc:'Large philanthropic foundation with 5 documented co-investments in the regenerative agriculture field. One of the highest-degree nodes in the funder cluster — central to multiple capital flow pathways.', connections:5},
+  {id:'walton',    label:'Conservation Fdn. A',     full:'Conservation Foundation A',                    color:'#185FA5', r:11, type:'Family foundation',       desc:'Conservation-focused family foundation. Co-investor in a transition finance coalition alongside Major Foundation A. Funded a major farm advisor roadmap initiative.', connections:3},
+  {id:'mcknight',  label:'Regional Fdn. A',         full:'Regional Foundation A',                        color:'#185FA5', r:10, type:'Major foundation',       desc:'Regional philanthropic foundation. FORA member and food systems funder focused on sustainable and regenerative agricultural practices.', connections:1},
+  {id:'tomkat',    label:'Ranch Fdn. A',            full:'Ranch Foundation A',                           color:'#185FA5', r:9,  type:'Family foundation',       desc:'Ranch-based educational foundation. FORA member focused on regenerative agriculture and food systems transformation.', connections:1},
+  {id:'11th',      label:'Philanthropic Project A', full:'Philanthropic Project A',                      color:'#185FA5', r:9,  type:'Philanthropic project',   desc:'FORA member. Supports organizations working on food systems transformation, soil health, and climate-resilient agriculture.', connections:1},
+  {id:'baszucki',  label:'Family Philanthropy A',   full:'Family Philanthropy A',                        color:'#185FA5', r:8,  type:'Family philanthropy',     desc:'FORA member. Philanthropic arm supporting regenerative food systems and soil health initiatives.', connections:1},
+  {id:'builders',  label:'Impact Platform A',       full:'Impact Platform A',                            color:'#185FA5', r:9,  type:'Philanthropy / investment',desc:'Philanthropic and investment platform. Co-investor in a regen ag lending fund alongside Major Foundation A. FORA member.', connections:2},
+  {id:'thornburg', label:'Family Fdn. A',           full:'Family Foundation A',                          color:'#185FA5', r:8,  type:'Family foundation',       desc:'FORA member. Philanthropic foundation supporting environmental and food systems work.', connections:1},
+  {id:'macdoch',   label:'Intl Family Fdn. A',   full:'International Family Foundation A',             color:'#185FA5', r:8,  type:'Family foundation',       desc:'International family foundation. FORA member and co-investor in a large regenerative farmland fund in the Southern Hemisphere.', connections:2},
+  {id:'mighty',    label:'Family Fdn. B',           full:'Family Foundation B',                          color:'#185FA5', r:8,  type:'Family foundation',       desc:'FORA member. Family foundation focused on land conservation and regenerative agriculture.', connections:1},
+  {id:'cedar',     label:'Family Fdn. C',           full:'Family Foundation C',                          color:'#185FA5', r:7,  type:'Foundation',              desc:'FORA member. Supports sustainable agriculture, conservation, and environmental education.', connections:1},
+  {id:'gaia',      label:'Family Fdn. D',           full:'Family Foundation D',                          color:'#185FA5', r:7,  type:'Family foundation',       desc:'Regional family foundation. FORA member focused on sustainable food and agriculture.', connections:1},
+  {id:'globetrot', label:'Family Fdn. E',           full:'Family Foundation E',                          color:'#185FA5', r:7,  type:'Family foundation',       desc:'FORA member. Philanthropic foundation supporting environmental and sustainability causes.', connections:1},
+  {id:'gordon',    label:'Family Fdn. F',           full:'Family Foundation F',                          color:'#185FA5', r:7,  type:'Family foundation',       desc:'FORA member. Family foundation supporting regenerative agriculture and food systems.', connections:1},
+  {id:'lilah',     label:'Family Fdn. G',           full:'Family Foundation G',                          color:'#185FA5', r:7,  type:'Family foundation',       desc:'FORA member. Family foundation supporting regenerative agriculture.', connections:1},
+  {id:'lumpkin',   label:'Family Fdn. H',           full:'Family Foundation H',                          color:'#185FA5', r:7,  type:'Family foundation',       desc:'FORA member. Regional family foundation supporting sustainable and regenerative food systems.', connections:1},
+  {id:'tauck',     label:'Family Fdn. I',           full:'Family Foundation I',                          color:'#185FA5', r:7,  type:'Family foundation',       desc:'FORA member. Family foundation supporting environmental and regenerative agriculture initiatives.', connections:1},
+  {id:'woka',      label:'Family Fdn. J',           full:'Family Foundation J',                          color:'#185FA5', r:7,  type:'Family foundation',       desc:'FORA member. Foundation supporting sustainable food systems and regenerative agriculture.', connections:1},
+  {id:'woodcock',  label:'Family Fdn. K',           full:'Family Foundation K',                          color:'#185FA5', r:7,  type:'Family foundation',       desc:'FORA member. Foundation supporting environmental conservation and sustainable agriculture.', connections:1},
+  {id:'wkkf',      label:'Major Foundation B',      full:'Major Foundation B',                           color:'#185FA5', r:10, type:'Major foundation',        desc:'FORA member. Major philanthropic foundation with equitable food systems focus. Strong regional agricultural presence.', connections:1},
+  {id:'campbell',  label:'Research Fdn. A',         full:'Research Foundation A',                        color:'#185FA5', r:8,  type:'Foundation',              desc:'FORA member. Funded a $1M academic study on regenerative farming practices. Supports regenerative agriculture research across university partners.', connections:2},
+  {id:'crown',     label:'Family Philanthropy B',   full:'Family Philanthropy B',                        color:'#185FA5', r:7,  type:'Family philanthropy',     desc:'FORA member. City-based family philanthropy supporting environmental and food systems initiatives.', connections:1},
+  // ── NGO / network ───────────────────────────────────────────────────────────
+  {id:'safsf',     label:'Funder Network A',        full:'Funder Peer Network A',                        color:'#3B6D11', r:9,  type:'Funder network',          desc:'Peer learning network for food systems philanthropists. FORA member providing coordination and knowledge-sharing across the philanthropic ecosystem.', connections:1},
+  {id:'gafof',     label:'Global Alliance A',       full:'Global Philanthropic Alliance A',              color:'#3B6D11', r:8,  type:'Philanthropic alliance',  desc:'Global philanthropic alliance for food systems transformation. FORA member with broad international funder network.', connections:1},
+  {id:'naturevest',label:'Conservation Finance A',  full:'Conservation Finance Arm A',                   color:'#3B6D11', r:9,  type:'Conservation finance',    desc:'Impact investing arm of a major conservation organization. FORA member channeling conservation finance into regenerative and nature-positive agriculture.', connections:1},
+  {id:'healing',   label:'Soil Foundation A',       full:'Soil Health Foundation A',                     color:'#3B6D11', r:7,  type:'Foundation',              desc:'Soil health-focused philanthropic foundation. FORA member.', connections:1},
+  {id:'confund',   label:'Conservation NGO A',      full:'Conservation NGO A',                           color:'#3B6D11', r:8,  type:'NGO / Conservation',      desc:'Major land conservation nonprofit. FORA member. Works at the intersection of conservation and economic development, protecting working farmland and forests.', connections:1},
+  {id:'ragfdn',    label:'Regen Fdn. A',            full:'Regenerative Agriculture Foundation A',        color:'#3B6D11', r:7,  type:'Foundation',              desc:'Philanthropic foundation dedicated to regenerative agriculture. FORA member. Supports organizations advancing regenerative farming practices and systems.', connections:1},
+  {id:'yale',      label:'Research Institution A',  full:'Research Institution A',                       color:'#3B6D11', r:10, type:'Academic / research',     desc:'University research center focused on business and environment. Co-investment from Major Foundation A. Founding partner of a conservation finance practitioner network.', connections:2},
+  {id:'ofrf',      label:'Research Fdn. B',         full:'Research Foundation B',                        color:'#3B6D11', r:7,  type:'Research foundation',     desc:'FORA member. Sponsors research and education related to organic farming and regenerative systems.', connections:1},
+  {id:'grace',     label:'Comms Foundation A',      full:'Communications Foundation A',                  color:'#3B6D11', r:7,  type:'NGO / Foundation',        desc:'FORA member. Focuses on sustainable food systems through media, communications, and policy.', connections:1},
+  {id:'pact',      label:'Finance Platform A',      full:'Finance Platform A',                           color:'#3B6D11', r:8,  type:'Finance platform',        desc:'FORA member. Bridges philanthropic and private investment to scale regenerative agriculture climate solutions.', connections:1},
+  {id:'tifs',      label:'Investment Initiative A', full:'Investment Initiative A',                      color:'#3B6D11', r:7,  type:'Investment initiative',   desc:'FORA member. Initiative focused on transformational investing in food systems through blended finance and catalytic capital.', connections:1},
+  {id:'earthshare',label:'Giving Platform A',       full:'Environmental Giving Platform A',              color:'#3B6D11', r:7,  type:'Giving platform',         desc:'FORA member. Environmental giving platform connecting donors to conservation and regenerative agriculture causes.', connections:1},
+  {id:'firstnations',label:'Indigenous Dev. NGO A', full:'Indigenous Development NGO A',                color:'#3B6D11', r:8,  type:'NGO',                     desc:'FORA member. Supports indigenous communities in building economic assets. Engaged in Indigenous-led regenerative agriculture and food sovereignty.', connections:1},
+  {id:'freshtaste',label:'Funder Collaborative A',  full:'Funder Collaborative A',                       color:'#3B6D11', r:7,  type:'Funder collaborative',    desc:'FORA member. Funder collaborative working to improve food access and build equitable and sustainable food systems.', connections:1},
+  // ── Impact funds / investment vehicles ──────────────────────────────────────
+  {id:'mad',       label:'Impact Fund A',           full:'Impact Fund A (Regen Lending)',                color:'#0F6E56', r:11, type:'Impact fund',             desc:'Regenerative agriculture lending fund and FORA member. Received co-investments from Major Foundation A, Impact Platform A, and Corporate Foundation A. Provides transition financing to regen producers.', connections:4},
+  {id:'iroquois',  label:'Farmland REIT A',         full:'Farmland REIT A',                              color:'#0F6E56', r:10, type:'Farmland REIT',           desc:'Farmland real estate investment trust providing organic transition financing to independent farmers. FORA member.', connections:1},
+  {id:'trailhead', label:'Impact Fund B',           full:'Impact Fund B',                                color:'#0F6E56', r:9,  type:'Impact fund',             desc:'Impact investing firm focused on regenerative agriculture. FORA member.', connections:1},
+  {id:'rsf',       label:'Social Finance A',        full:'Social Finance Organization A',                color:'#0F6E56', r:9,  type:'Social finance',          desc:'Community development finance organization providing loans, investments, and grants. FORA member.', connections:1},
+  {id:'steward',   label:'Lending Platform A',      full:'Lending Platform A',                           color:'#0F6E56', r:9,  type:'Lending platform',        desc:'Direct-to-farmer lending platform providing accessible capital to regenerative producers. FORA member.', connections:1},
+  {id:'nest',      label:'Family Office A',         full:'Family Office A',                              color:'#0F6E56', r:8,  type:'Family office',           desc:'Family office focused on regenerative agriculture impact investing. FORA member.', connections:1},
+  {id:'tikehau',   label:'Asset Manager A',         full:'Asset Manager A',                              color:'#854F0B', r:11, type:'Asset manager',           desc:'Dedicated regenerative agriculture investment strategy exceeding €500M. Co-invested in an agricultural input platform. One of the largest dedicated regen ag investment vehicles globally.', connections:2},
+  {id:'transcap',  label:'Finance Coalition A',     full:'Finance Coalition A',                          color:'#854F0B', r:10, type:'Finance coalition',       desc:'Transition finance coalition connecting 20+ organizations. Co-investments from Major Foundation A and Conservation Foundation A. High betweenness — bridges funder and corporate clusters.', connections:3},
+  {id:'farmlandlp',label:'Farmland Fund A',         full:'Farmland Fund A',                              color:'#854F0B', r:10, type:'Farmland fund',           desc:'Converts conventional farmland to certified organic. Co-investments from Technology Co. A and a specialist agricultural finance firm.', connections:3},
+  {id:'mirova',    label:'Asset Manager B',         full:'Asset Manager B',                              color:'#854F0B', r:10, type:'Asset manager',           desc:'Regenerative agriculture fund exceeding €350M. Formal partnership with a leading global certification body across three continents.', connections:1},
+  {id:'madmkt',    label:'Regen Trading Co. A',     full:'Regenerative Trading Co. A',                   color:'#854F0B', r:8,  type:'PBC / trading',           desc:'Regenerative commodity trading platform structured as a public benefit corporation. Co-investments in a seed company and a regenerative capital fund.', connections:2},
+  {id:'fmo',       label:'Dev. Finance Inst. A',    full:'Development Finance Institution A',            color:'#854F0B', r:8,  type:'Development finance',     desc:'Development finance institution. $35M first-loss financing to an agroforestry transition fund for smallholder farmers in tropical regions.', connections:1},
+  {id:'cienega',   label:'Impact Capital A',        full:'Impact Capital A',                             color:'#854F0B', r:7,  type:'Impact capital',          desc:'FORA member. Impact investment firm focused on sustainable food and agriculture.', connections:1},
+  {id:'dirtpart',  label:'Farmland Fund B',         full:'Farmland Fund B',                              color:'#854F0B', r:8,  type:'Farmland fund',           desc:'FORA member. Acquires and leases farmland to farmers transitioning to organic and regenerative production.', connections:1},
+  {id:'mdf',       label:'Impact Finance A',        full:'Impact Finance Organization A',                color:'#854F0B', r:7,  type:'Impact finance',          desc:'FORA member. Community development finance institution providing capital to underserved communities including food systems.', connections:1},
+  {id:'potlikker', label:'Impact Fund C',           full:'Impact Fund C',                                color:'#854F0B', r:7,  type:'Impact fund',             desc:'FORA member. Impact fund focused on food systems transformation and regenerative agriculture.', connections:1},
+  {id:'foodcap',   label:'Food Systems Fund A',     full:'Food Systems Fund A',                          color:'#854F0B', r:7,  type:'Impact fund',             desc:'FORA member. Fund focused on catalyzing investment in sustainable and regenerative food systems.', connections:1},
+  {id:'flo',       label:'Land & Food Initiative A',full:'Food and Land Opportunity Initiative A',       color:'#854F0B', r:7,  type:'Finance initiative',      desc:'FORA member. Initiative bridging food, land, and investment for regenerative transitions.', connections:1},
+  {id:'walden',    label:'Community Bank A',        full:'Community Bank A',                             color:'#854F0B', r:8,  type:'Community bank',          desc:'FORA member. Regional mutual savings bank providing regenerative and organic farm financing at preferential rates.', connections:1},
+  {id:'fibers',    label:'Fiber Fund A',            full:'Fiber Fund A',                                 color:'#854F0B', r:7,  type:'Impact fund',             desc:'FORA member. Focused on sustainable and regenerative fiber systems including textile supply chains.', connections:1},
+  {id:'tundra',    label:'Climate Fund A',          full:'Climate Fund A',                               color:'#854F0B', r:7,  type:'Impact fund',             desc:'FORA member. Impact fund supporting regenerative agriculture and climate solutions.', connections:1},
+  {id:'ruralclim', label:'Rural Finance A',         full:'Rural Climate Finance A',                      color:'#854F0B', r:7,  type:'Finance partnership',     desc:'FORA member. Supports rural climate and regenerative agriculture financing.', connections:1},
+  // ── Corporate investors / AgTech ─────────────────────────────────────────────
+  {id:'cisco',     label:'Corporate Foundation A',  full:'Corporate Foundation A',                       color:'#888780', r:11, type:'Corporate foundation',   desc:'Corporate foundation with a $100M / 10-year commitment. 4 documented co-investments in regen ag platforms and smallholder farmer support organizations.', connections:4},
+  {id:'msft',      label:'Technology Co. A',        full:'Technology Company A',                         color:'#888780', r:11, type:'Corporate investor',      desc:'Major technology company. Significant co-investor in soil carbon markets: three documented deals spanning millions of tonnes and hundreds of millions in farmland investment.', connections:3},
+  {id:'fractal',   label:'AgTech Co. A',            full:'AgTech Company A',                             color:'#888780', r:7,  type:'AgTech',                  desc:'Regenerative agriculture technology platform. Received co-investment from Corporate Foundation A.', connections:1},
+  {id:'indigo',    label:'AgTech Co. B',            full:'AgTech Company B',                             color:'#888780', r:8,  type:'AgTech',                  desc:'Soil carbon and regenerative grain platform. Co-investment from Technology Co. A (multi-year soil carbon purchase agreement covering millions of tonnes).', connections:1},
+  {id:'proofing',  label:'Advisory Org. A',         full:'Advisory Organization A',                      color:'#888780', r:7,  type:'Consulting / Advisory',   desc:'FORA member. Advisory and investment support organization for regenerative food systems.', connections:1},
+  {id:'guidelight',label:'Strategy Firm A',         full:'Strategy Firm A',                              color:'#888780', r:7,  type:'Advisory',                desc:'FORA member. Strategy and advisory firm supporting regenerative agriculture and sustainable food systems organizations.', connections:1},
+  {id:'breakthrough',label:'Strategy Firm B',       full:'Strategy Firm B',                              color:'#888780', r:7,  type:'Advisory',                desc:'FORA member. Strategic advisory firm focused on food systems transformation and regenerative agriculture.', connections:1},
+  {id:'armonia',   label:'Advisory Firm A',         full:'Advisory Firm A',                              color:'#888780', r:7,  type:'Advisory',                desc:'FORA member. Advisory firm supporting impact investing and regenerative agriculture initiatives.', connections:1},
+  {id:'noreg',     label:'Climate Initiative A',    full:'Climate Risk Initiative A',                    color:'#888780', r:7,  type:'Initiative',              desc:'FORA member. Initiative promoting proactive investment in regenerative agriculture as climate risk management.', connections:1},
+  {id:'calfoodshed',label:'Regional Collaborative A',full:'Regional Funder Collaborative A',             color:'#3B6D11', r:7,  type:'Funder collaborative',    desc:'FORA member. Regional funder collaborative supporting local food systems and regenerative agriculture.', connections:1},
 ];
 
 const LINKS = [
-  {s:'fora',t:'rock',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'walton',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'tomkat',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'mcknight',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'11th',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'cisco',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'mad',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'iroquois',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'trailhead',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'rsf',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'steward',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'nest',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'macdoch',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'baszucki',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'safsf',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'gafof',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'naturevest',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'tikehau',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'transcap',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'farmlandlp',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'mirova',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'madmkt',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'yale',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'builders',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'fora',t:'fmo',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'healing',w:1.5,op:.35,c:'#0F6E56'},
-  {s:'rock',t:'transcap',w:2,op:.55,c:'#854F0B',d:'5,3'},{s:'walton',t:'transcap',w:2,op:.55,c:'#854F0B',d:'5,3'},
-  {s:'rock',t:'mad',w:2,op:.55,c:'#854F0B',d:'5,3'},{s:'builders',t:'mad',w:2,op:.55,c:'#854F0B',d:'5,3'},
-  {s:'cisco',t:'mad',w:2,op:.55,c:'#854F0B',d:'5,3'},{s:'cisco',t:'fractal',w:1.5,op:.45,c:'#854F0B',d:'5,3'},
-  {s:'msft',t:'farmlandlp',w:2,op:.55,c:'#854F0B',d:'5,3'},{s:'msft',t:'indigo',w:2,op:.55,c:'#854F0B',d:'5,3'},
-  {s:'fmo',t:'mad',w:1.5,op:.45,c:'#854F0B',d:'5,3'},{s:'rock',t:'yale',w:1.5,op:.45,c:'#854F0B',d:'5,3'},
+  // ── All FORA membership edges ────────────────────────────────────────────
+  {s:'fora',t:'rock',       w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'walton',     w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'mcknight',   w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'tomkat',     w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'11th',       w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'baszucki',   w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'builders',   w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'thornburg',  w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'macdoch',    w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'mighty',     w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'cedar',      w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'gaia',       w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'globetrot',  w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'gordon',     w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'lilah',      w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'lumpkin',    w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'tauck',      w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'woka',       w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'woodcock',   w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'wkkf',       w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'campbell',   w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'crown',      w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'safsf',      w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'gafof',      w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'naturevest', w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'healing',    w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'confund',    w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'ragfdn',     w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'yale',       w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'ofrf',       w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'grace',      w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'pact',       w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'tifs',       w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'earthshare', w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'firstnations',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'freshtaste',w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'mad',        w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'iroquois',   w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'trailhead',  w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'rsf',        w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'steward',    w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'nest',       w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'tikehau',    w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'transcap',   w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'farmlandlp', w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'mirova',     w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'madmkt',     w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'fmo',        w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'cienega',    w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'dirtpart',   w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'mdf',        w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'potlikker',  w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'foodcap',    w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'flo',        w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'walden',     w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'fibers',     w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'tundra',     w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'ruralclim',  w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'cisco',      w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'msft',       w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'proofing',   w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'guidelight', w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'breakthrough',w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'armonia',   w:1.5,op:.35,c:'#0F6E56'},
+  {s:'fora',t:'noreg',      w:1.5,op:.35,c:'#0F6E56'},{s:'fora',t:'calfoodshed',w:1.5,op:.35,c:'#0F6E56'},
+  // ── Bilateral co-investment edges (dashed) ───────────────────────────────
+  {s:'rock',t:'transcap',   w:2,op:.55,c:'#854F0B',d:'5,3'},{s:'walton',t:'transcap', w:2,op:.55,c:'#854F0B',d:'5,3'},
+  {s:'rock',t:'mad',        w:2,op:.55,c:'#854F0B',d:'5,3'},{s:'builders',t:'mad',    w:2,op:.55,c:'#854F0B',d:'5,3'},
+  {s:'cisco',t:'mad',       w:2,op:.55,c:'#854F0B',d:'5,3'},{s:'cisco',t:'fractal',   w:1.5,op:.45,c:'#854F0B',d:'5,3'},
+  {s:'msft',t:'farmlandlp', w:2,op:.55,c:'#854F0B',d:'5,3'},{s:'msft',t:'indigo',     w:2,op:.55,c:'#854F0B',d:'5,3'},
+  {s:'fmo',t:'mad',         w:1.5,op:.45,c:'#854F0B',d:'5,3'},{s:'rock',t:'yale',     w:1.5,op:.45,c:'#854F0B',d:'5,3'},
+  {s:'macdoch',t:'mad',     w:1.5,op:.45,c:'#854F0B',d:'5,3'},
 ];
 
-const W=()=>document.getElementById('canvas').clientWidth;
-const H=()=>document.getElementById('canvas').clientHeight;
-const svg=d3.select('#svg');
-const g=svg.append('g');
-const zoom=d3.zoom().scaleExtent([0.3,3]).on('zoom',e=>g.attr('transform',e.transform));
+
+const W = () => document.getElementById('canvas').clientWidth;
+const H = () => document.getElementById('canvas').clientHeight;
+
+const svg = d3.select('#svg');
+const g   = svg.append('g');
+
+const zoom = d3.zoom().scaleExtent([0.3,3])
+  .on('zoom', e => g.attr('transform', e.transform));
 svg.call(zoom);
-NODES.forEach(n=>{n.x=W()/2+(Math.random()-.5)*260;n.y=H()/2+(Math.random()-.5)*260;});
-const links=LINKS.map(l=>({...l,source:l.s,target:l.t}));
-const sim=d3.forceSimulation(NODES)
-  .force('link',d3.forceLink(links).id(d=>d.id).distance(90).strength(0.45))
-  .force('charge',d3.forceManyBody().strength(d=>d.hub?-600:-240))
-  .force('center',d3.forceCenter(W()/2,H()/2))
-  .force('collision',d3.forceCollide().radius(d=>d.r+16));
-const linkSel=g.append('g').selectAll('line').data(links).join('line')
-  .attr('stroke',d=>d.c).attr('stroke-width',d=>d.w)
-  .attr('stroke-opacity',d=>d.op).attr('stroke-dasharray',d=>d.d||null);
-const nodeSel=g.append('g').selectAll('g').data(NODES).join('g').style('cursor','pointer')
+
+NODES.forEach(n => { n.x = W()/2+(Math.random()-.5)*260; n.y = H()/2+(Math.random()-.5)*260; });
+
+const links = LINKS.map(l => ({...l, source:l.s, target:l.t}));
+
+const sim = d3.forceSimulation(NODES)
+  .force('link',      d3.forceLink(links).id(d=>d.id).distance(d=>d.d?70:100).strength(0.35))
+  .force('charge',    d3.forceManyBody().strength(d=>d.hub?-800:-180))
+  .force('center',    d3.forceCenter(W()/2, H()/2))
+  .force('collision', d3.forceCollide().radius(d=>d.r+14));
+
+const linkSel = g.append('g').selectAll('line').data(links).join('line')
+  .attr('stroke',           d => d.c)
+  .attr('stroke-width',     d => d.w)
+  .attr('stroke-opacity',   d => d.op)
+  .attr('stroke-dasharray', d => d.d || null);
+
+const nodeSel = g.append('g').selectAll('g').data(NODES).join('g')
+  .style('cursor','pointer')
   .call(d3.drag()
-    .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
-    .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y})
-    .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null}));
-nodeSel.append('circle').attr('r',d=>d.r).attr('fill',d=>d.color)
-  .attr('fill-opacity',d=>d.hub?.95:.78).attr('stroke',d=>d.color)
-  .attr('stroke-width',d=>d.hub?2.5:1.5).attr('stroke-opacity',d=>d.hub?1:.6);
-nodeSel.filter(d=>d.hub).append('text').attr('text-anchor','middle').attr('dy','0.35em')
-  .attr('font-family','DM Sans, sans-serif').attr('font-size','9px').attr('font-weight','500')
-  .attr('fill','#fff').attr('pointer-events','none').text(d=>d.label);
-nodeSel.filter(d=>!d.hub).append('text').attr('text-anchor','middle').attr('dy',d=>d.r+11)
-  .attr('font-family','DM Sans, sans-serif').attr('font-size','9.5px')
-  .attr('fill','#5a6b62').attr('font-weight','300').attr('pointer-events','none').text(d=>d.label);
-sim.on('tick',()=>{
-  linkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
-  nodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);
+    .on('start', (e,d)=>{ if(!e.active) sim.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; })
+    .on('drag',  (e,d)=>{ d.fx=e.x; d.fy=e.y; })
+    .on('end',   (e,d)=>{ if(!e.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }));
+
+nodeSel.append('circle')
+  .attr('r',            d => d.r)
+  .attr('fill',         d => d.color)
+  .attr('fill-opacity', d => d.hub ? 0.95 : 0.78)
+  .attr('stroke',       d => d.color)
+  .attr('stroke-width', d => d.hub ? 2.5 : 1.5)
+  .attr('stroke-opacity', d => d.hub ? 1 : 0.6);
+
+nodeSel.filter(d => d.hub).append('text')
+  .attr('text-anchor','middle').attr('dy','0.35em')
+  .attr('font-family','DM Sans, sans-serif')
+  .attr('font-size','10px').attr('font-weight','500').attr('fill','#fff')
+  .attr('pointer-events','none').text(d => d.label);
+
+nodeSel.filter(d => !d.hub).append('text')
+  .attr('text-anchor','middle').attr('dy', d => d.r + 11)
+  .attr('font-family','DM Sans, sans-serif')
+  .attr('font-size','9.5px').attr('fill','#5a6b62').attr('font-weight','300')
+  .attr('pointer-events','none').text(d => d.label);
+
+sim.on('tick', () => {
+  linkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y)
+         .attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+  nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
 });
-let sel=null;
-const panel=document.getElementById('panel');
-nodeSel.on('click',function(event,d){
+
+let sel = null;
+const panel = document.getElementById('panel');
+
+nodeSel.on('click', function(event, d) {
   event.stopPropagation();
-  if(sel===d.id){reset();return;}
-  sel=d.id;
-  const conn=new Set([d.id]);
-  links.forEach(l=>{if(l.source.id===d.id)conn.add(l.target.id);if(l.target.id===d.id)conn.add(l.source.id);});
-  nodeSel.classed('node-dim',n=>!conn.has(n.id));
-  linkSel.attr('stroke-opacity',l=>conn.has(l.source.id)&&conn.has(l.target.id)?Math.min((l.op||.35)*2.8,.9):.04);
-  document.getElementById('p-tag').textContent=d.type;
-  document.getElementById('p-name').textContent=d.full||d.label;
-  document.getElementById('p-desc').textContent=d.desc;
-  document.getElementById('p-stats').innerHTML=`<div class="ps"><span class="ps-v">${conn.size-1}</span><span class="ps-l">connections</span></div>`+(d.connections?`<div class="ps"><span class="ps-v">${d.connections}</span><span class="ps-l">total reported</span></div>`:'');
+  if (sel === d.id) { reset(); return; }
+  sel = d.id;
+
+  const conn = new Set([d.id]);
+  links.forEach(l => {
+    if (l.source.id===d.id) conn.add(l.target.id);
+    if (l.target.id===d.id) conn.add(l.source.id);
+  });
+
+  nodeSel.classed('node-dim', n => !conn.has(n.id));
+  linkSel.attr('stroke-opacity', l =>
+    conn.has(l.source.id) && conn.has(l.target.id)
+      ? Math.min((l.op||0.35)*2.8, 0.9)
+      : 0.04
+  );
+
+  document.getElementById('p-tag').textContent  = d.type;
+  document.getElementById('p-name').textContent = d.full || d.label;
+  document.getElementById('p-desc').textContent = d.desc;
+  const st = document.getElementById('p-stats');
+  st.innerHTML = `<div class="ps"><span class="ps-v">${conn.size-1}</span><span class="ps-l">connections</span></div>`
+    + (d.connections ? `<div class="ps"><span class="ps-v">${d.connections}</span><span class="ps-l">total reported</span></div>` : '');
   panel.classList.add('vis');
 });
-svg.on('click',reset);
-function reset(){sel=null;nodeSel.classed('node-dim',false);linkSel.attr('stroke-opacity',d=>d.op);panel.classList.remove('vis');}
-window.addEventListener('resize',()=>{sim.force('center',d3.forceCenter(W()/2,H()/2)).alpha(0.1).restart();});
+
+svg.on('click', reset);
+
+function reset() {
+  sel = null;
+  nodeSel.classed('node-dim', false);
+  linkSel.attr('stroke-opacity', d => d.op);
+  panel.classList.remove('vis');
+}
+
+window.addEventListener('resize', () => {
+  sim.force('center', d3.forceCenter(W()/2, H()/2)).alpha(0.1).restart();
+});
 </script>
 </body>
 </html>
