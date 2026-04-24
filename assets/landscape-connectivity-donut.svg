@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380" width="320" height="380"
+     style="font-family: DM Sans, sans-serif; background: transparent;">
+
+  <!-- Donut slices -->
+  <path d="M 160.00,42.00 A 118,118 0 1,1 43.59,140.67 L 87.00,147.88 A 74,74 0 1,0 160.00,86.00 Z"
+        fill="#c8d5c0" opacity="0.55"/>
+  <path d="M 43.59,140.67 A 118,118 0 0,1 160.00,42.00 L 160.00,86.00 A 74,74 0 0,0 87.00,147.88 Z"
+        fill="#3B6D11" opacity="0.88"/>
+
+  <!-- Centre text -->
+  <text x="160" y="144" text-anchor="middle"
+        font-size="32" font-weight="500" fill="#1c2420"
+        style="font-family: DM Serif Display, serif;">78%</text>
+  <text x="160" y="168" text-anchor="middle"
+        font-size="11.5" font-weight="300" fill="#5a6b62"
+        letter-spacing="0.01em">of organizations</text>
+  <text x="160" y="184" text-anchor="middle"
+        font-size="11.5" font-weight="300" fill="#5a6b62"
+        letter-spacing="0.01em">have no logged</text>
+  <text x="160" y="200" text-anchor="middle"
+        font-size="11.5" font-weight="300" fill="#5a6b62"
+        letter-spacing="0.01em">connections</text>
+
+  <!-- Legend below chart -->
+  <rect x="54" y="270" width="12" height="12" rx="2" fill="#3B6D11" opacity="0.88"/>
+  <text x="72" y="281" font-size="12" fill="#1c2420" font-weight="400">737 connected</text>
+  <text x="72" y="296" font-size="11" fill="#5a6b62" font-weight="300">to the coalition network</text>
+
+  <rect x="54" y="312" width="12" height="12" rx="2" fill="#c8d5c0" opacity="0.8"/>
+  <text x="72" y="323" font-size="12" fill="#1c2420" font-weight="400">2,556 unconnected</text>
+  <text x="72" y="338" font-size="11" fill="#5a6b62" font-weight="300">WhyRegen base; no logged edges</text>
+
+  <!-- Total label -->
+  <text x="160" y="368" text-anchor="middle" font-size="10.5"
+        fill="#8a9b8a" font-weight="300">
+    of 3,293 total organizations mapped
+  </text>
+
+</svg>
