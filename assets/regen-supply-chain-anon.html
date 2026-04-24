@@ -3,28 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Regenerative Agriculture — Supply Chain Network</title>
+<title>Regenerative Agriculture — Supply Chain Network (Illustrative)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --amber: #854F0B; --ink: #1c2018; --muted: #626057;
-    --border: rgba(133,79,11,0.13); --panel-bg: rgba(255,255,255,0.97); --bg: #f4f2ed;
-  }
+  :root { --green-mid: #3B6D11; --ink: #1c2420; --muted: #5a6b62; --border: rgba(59,109,17,0.15); --panel-bg: rgba(255,255,255,0.97); --bg: #f4f5f0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
   header { padding: 16px 24px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 16px; background: var(--bg); flex-shrink: 0; }
   header h1 { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); letter-spacing: -0.02em; }
   header p { font-size: 13px; color: var(--muted); font-weight: 300; }
   header .stats { margin-left: auto; display: flex; gap: 24px; }
   .stat { text-align: right; }
-  .stat-v { font-size: 18px; font-weight: 500; color: var(--amber); display: block; }
+  .stat-v { font-size: 18px; font-weight: 500; color: var(--green-mid); display: block; }
   .stat-l { font-size: 11px; color: var(--muted); }
   #canvas { flex: 1; position: relative; overflow: hidden; }
   svg { width: 100%; height: 100%; }
   #panel { position: absolute; top: 16px; right: 16px; width: 228px; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; opacity: 0; pointer-events: none; transition: opacity 0.2s; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
   #panel.vis { opacity: 1; pointer-events: auto; }
-  #p-tag { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--amber); margin-bottom: 5px; }
+  #p-tag { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--green-mid); margin-bottom: 5px; }
   #p-name { font-family: 'DM Serif Display', serif; font-size: 16px; font-weight: 400; color: var(--ink); line-height: 1.3; margin-bottom: 8px; }
   #p-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 10px; font-weight: 300; }
   #p-stats { display: flex; gap: 16px; padding-top: 10px; border-top: 1px solid var(--border); }
@@ -36,15 +33,18 @@
   .leg-line { width: 18px; height: 2px; flex-shrink: 0; }
   #hint { position: absolute; bottom: 16px; right: 16px; font-size: 11px; color: var(--muted); font-weight: 300; }
   .node-dim { opacity: 0.1; }
+  .link-active { stroke-opacity: 0.75 !important; stroke-width: 2.5px !important; }
+  .link-dim { stroke-opacity: 0.03 !important; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Supply Chain Network</h1>
-  <p>Regenerative Agriculture Ecosystem · Retailers, Brands, Farms &amp; Verification</p>
+  <h1>Supply Chain Network (Illustrative)</h1>
+  <p>Regenerative Agriculture Ecosystem · Retailers, Brands, Farms and Verification · Illustrative</p>
   <div class="stats">
-    <div class="stat"><span class="stat-v">102</span><span class="stat-l">formal partnerships</span></div>
-    <div class="stat"><span class="stat-v">65</span><span class="stat-l">co-investments</span></div>
+    <div class="stat"><span class="stat-v">39</span><span class="stat-l">organizations</span></div>
+    <div class="stat"><span class="stat-v">28</span><span class="stat-l">formal partnerships</span></div>
+    <div class="stat"><span class="stat-v">9</span><span class="stat-l">co-memberships</span></div>
   </div>
 </header>
 <div id="canvas">
@@ -58,148 +58,279 @@
   <div id="legend">
     <div class="leg"><div class="leg-dot" style="background:#185FA5"></div>Retailer / foodservice</div>
     <div class="leg"><div class="leg-dot" style="background:#6a1b9a"></div>CPG brand / commodity trader</div>
-    <div class="leg"><div class="leg-dot" style="background:#97C459"></div>Regenerative farm / land vehicle</div>
+    <div class="leg"><div class="leg-dot" style="background:#3B6D11"></div>Regenerative farm / land / platform</div>
     <div class="leg"><div class="leg-dot" style="background:#888780"></div>Verification / certification / NGO</div>
-    <div class="leg"><div class="leg-dot" style="background:#3B6D11"></div>Research / advocacy NGO</div>
-    <div class="leg"><div class="leg-line" style="background:#854F0B;opacity:.7"></div>Formal partnership (documented)</div>
-    <div class="leg"><div class="leg-line" style="background:repeating-linear-gradient(90deg,#854F0B 0,#854F0B 4px,transparent 4px,transparent 7px)"></div>Co-investment or co-membership</div>
+    <div class="leg"><div class="leg-line" style="background:#6a1b9a;opacity:.7"></div>Formal partnership (documented)</div>
+    <div class="leg"><div class="leg-line" style="background:repeating-linear-gradient(90deg,#854F0B 0,#854F0B 4px,transparent 4px,transparent 7px)"></div>Co-membership / indirect</div>
   </div>
   <div id="hint">click any node to explore · scroll to zoom · drag to pan</div>
 </div>
 <script>
 const NODES = [
-  {id:'wfm',      label:'Natural Retailer A',     full:'Natural Retailer A',                  color:'#185FA5', r:14, type:'Retailer',               desc:'Major natural and organic grocery retailer. Formal partnerships with a regenerative beef brand, a regenerative agriculture support platform, and a soil initiative. Member of the organic trade association and a grain collaboration.'},
-  {id:'sprts',    label:'Natural Retailer B',     full:'Natural Retailer B',                   color:'#185FA5', r:11, type:'Retailer',               desc:'Natural grocery chain. Formal partnership with a regenerative beef brand for sourcing. Carries certified regenerative private label products.'},
-  {id:'naturalgro',label:'Natural Retailer C',   full:'Natural Retailer C',                   color:'#185FA5', r:10, type:'Retailer',               desc:'Natural grocery chain. Formal partnership with a leading regenerative agriculture research institution. Carries certified regenerative eggs.'},
-  {id:'walmart',  label:'Mass Retailer A',        full:'Mass Retailer A',                      color:'#185FA5', r:13, type:'Retailer',               desc:'Mass market retailer. Three-way formal partnership with a major food company and a conservation grant organization targeting 600,000 acres of regenerative agriculture by 2030.'},
-  {id:'newseason',label:'Indie Retailer A',       full:'Independent Retailer A',               color:'#185FA5', r:9,  type:'Retailer',               desc:'Independent natural grocery chain. Formal partnership with a restaurant-funded regenerative farm grant organization for local regenerative sourcing.'},
-  {id:'pccmkt',   label:'Food Co-op A',           full:'Food Cooperative A',                   color:'#185FA5', r:9,  type:'Retailer',               desc:'Member-owned organic grocery cooperative. Organic trade association Sustainability Council member.'},
-  {id:'momsorg',  label:'Organic Retailer A',     full:'Organic Retailer A',                   color:'#185FA5', r:9,  type:'Retailer',               desc:'Regional organic grocery chain. Organic trade association Sustainability Council member with a strong environmental focus.'},
-  {id:'chipotle', label:'Restaurant Chain A',     full:'Restaurant Chain A',                   color:'#185FA5', r:11, type:'Restaurant chain',        desc:'National restaurant chain. Co-investments in robotic weeding technology and green nitrogen technology for use in organic farming. Active regenerative ag sourcing program.'},
-  {id:'genmills', label:'Global Food Co. A',      full:'Global Food Company A',                color:'#6a1b9a', r:13, type:'CPG brand',               desc:'Highest-degree cross-coalition connector in the network (5 coalitions). Formal partnership with a farmland protection NGO for a 600,000-acre regenerative commitment. Anchor for a mass retailer regenerative program. Member of 5 coalitions spanning organic trade, climate pledges, dairy emissions, soil training, and land verification.'},
-  {id:'vitfarms', label:'Pasture-Raised Brand A', full:'Pasture-Raised Brand A',               color:'#6a1b9a', r:10, type:'Pasture-raised brand',    desc:'Pasture-raised egg and butter brand. Formal partnership with a third-party regenerative verification body. Also organic trade association and land sourcing standard member.'},
-  {id:'wildfarmd',label:'Regen Grain Brand A',    full:'Regenerative Grain Brand A',           color:'#6a1b9a', r:9,  type:'Regen grain brand',       desc:'Regenerative grain brand. Formal partnership with a carbon forum. Partners with chefs and bakers to source regeneratively grown wheat and flour.'},
-  {id:'teton',    label:'Regen Beef Brand A',     full:'Regenerative Beef Brand A',            color:'#6a1b9a', r:9,  type:'Regen beef brand',        desc:'100% grass-fed regenerative beef brand. Documented formal partnerships with two major natural grocery retailers for exclusive sourcing programs.'},
-  {id:'kindsnk',  label:'Snack Brand A',          full:'Snack Brand A',                        color:'#6a1b9a', r:9,  type:'Snack brand',             desc:'Nut and grain-based snack brand. Formal partnership with a regenerative research farm for transitioning ingredient supply chains to regenerative production.'},
-  {id:'madagric', label:'Regen Platform A',       full:'Regenerative Agriculture Platform A',  color:'#6a1b9a', r:9,  type:'Regen support platform',  desc:'Regenerative agriculture support platform. Co-investments from a corporate foundation and a major philanthropic foundation. Formal partnership with a major natural grocery retailer. Part of the funder coalition.'},
-  {id:'applegate',label:'Meat Brand A',           full:'Meat Brand A',                         color:'#6a1b9a', r:9,  type:'Meat brand',              desc:'Organic and natural meat brand. Formal partnership with a regenerative agriculture advocacy NGO. Member of a land sourcing standard, organic trade association, and Farm Bill advocacy coalition.'},
-  {id:'adm',      label:'Commodity Trader A',     full:'Commodity Trader A',                   color:'#6a1b9a', r:11, type:'Commodity trader',        desc:'Major global commodity trader. 4 million acres enrolled in regenerative agriculture program. Formal partnership with a farmer platform for verified regenerative grain. Climate pledge coalition participant. Government co-investor. Formal partnerships with two CPG brands.'},
-  {id:'wopas',    label:'Regen Farm A',           full:'Regenerative Farm A',                  color:'#97C459', r:11, type:'Regenerative farm',        desc:'Flagship multi-species regenerative farm. Land sourcing standard verified. Certification coalition founding member. Widely cited as a model for holistic planned grazing at scale.'},
-  {id:'alexandrefm',label:'Regen Dairy Farm A',  full:'Regenerative Dairy Farm A',             color:'#97C459', r:9,  type:'Regenerative farm',       desc:'Organic dairy and egg farm. Land sourcing standard verified and certification-program certified. First certified dairy farm in the certification program.'},
-  {id:'polyface', label:'Regen Farm B',           full:'Regenerative Farm B',                  color:'#97C459', r:9,  type:'Regenerative farm',       desc:'Pasture-raised multi-species farm. Formal partnership with a federal agency. Widely referenced as a model regenerative production system in agricultural transition literature.'},
-  {id:'farmlandlp',label:'Farmland Fund A',       full:'Farmland Fund A',                      color:'#97C459', r:9,  type:'Farmland fund',           desc:'Converts conventional farmland to certified organic production. Formal partnerships with a carbon verification firm and a carbon registry. Co-investment from a major technology company.'},
-  {id:'cmiorchards',label:'Organic Orchard A',   full:'Organic Orchard Co. A',                 color:'#97C459', r:8,  type:'Organic produce',         desc:'Organic orchard management company. Formal partnership with a farming operation. Co-investment from an institutional asset manager.'},
-  {id:'diestel',  label:'Regen Poultry Farm A',  full:'Regenerative Poultry Farm A',            color:'#97C459', r:8,  type:'Regen farm / brand',      desc:'Multi-generation regenerative poultry farm. Formal partnership with a third-party regenerative verification body.'},
-  {id:'regenified',label:'Verification Body A',  full:'Verification Body A',                   color:'#888780', r:10, type:'Certification body',       desc:'Third-party regenerative agriculture verification body. Formal partnerships with a pasture-raised brand, a regenerative poultry farm, and a commodity trader\'s soil health program.'},
-  {id:'sclimate', label:'Soil Initiative A',     full:'Soil Climate Initiative A',             color:'#888780', r:8,  type:'NGO',                     desc:'Soil carbon and regenerative sourcing initiative. Formal partnership with a major natural grocery retailer for regenerative sourcing programs.'},
-  {id:'zerofp',   label:'Farm Grant NGO A',      full:'Farm Grant NGO A',                      color:'#888780', r:8,  type:'NGO',                     desc:'Restaurant-funded regenerative farm grant organization. Formal partnership with an independent natural grocery chain. Collects micro-donations to fund local regenerative farms.'},
-  {id:'wolfe',    label:'Research Farm A',       full:'Research Farm A',                       color:'#888780', r:8,  type:'Research farm / NGO',     desc:'Research and education farm. Formal partnerships with a major snack brand and a regenerative advocacy NGO. Focus on regenerative systems and farmer training.'},
-  {id:'amftrust', label:'Farmland NGO A',        full:'Farmland Protection NGO A',             color:'#888780', r:9,  type:'NGO',                     desc:'Farmland protection and agricultural transition nonprofit. Formal partnership with a global food company as part of a 600,000-acre regenerative agriculture commitment.'},
-  {id:'verra',    label:'Carbon Registry A',     full:'Carbon Registry A',                     color:'#888780', r:9,  type:'Carbon registry',         desc:'Voluntary carbon market registry. Formal partnerships with a farmland fund and a soil measurement program for soil carbon credit verification.'},
-  {id:'fbn',      label:'Farmer Platform A',     full:'Farmer Platform A',                     color:'#888780', r:9,  type:'Farmer platform',         desc:'Farmer platform and input marketplace. Formal partnership with a major commodity trader for a verified regenerative grain program connecting farmers to buyers.'},
-  {id:'rodale',   label:'Research NGO A',        full:'Research NGO A',                        color:'#3B6D11', r:10, type:'Research / NGO',           desc:'Pioneer regenerative agriculture research institution. Formal partnerships with a natural grocery retailer, a university, and an agroforestry platform. Received philanthropic co-investment. Active since 1947.'},
-  {id:'kissground',label:'Advocacy NGO A',       full:'Advocacy NGO A',                        color:'#3B6D11', r:9,  type:'NGO / advocacy',           desc:'Regenerative agriculture advocacy nonprofit. Stewards a Farm Bill policy coalition. Formal partnerships with a meat brand, a fashion retailer, and a specialty coffee company. Launched a brand partnerships program in 2024.'},
+  {id:"wfm",label:"Natural Retailer A",full:"Natural Retailer A",color:"#185FA5",r:13,tier:0,type_label:"Retailer",desc:"Formal partnerships with a regen beef brand, regen ag support platform, and soil initiative. Organic trade association and grain collaboration member."},
+  {id:"sprts",label:"Natural Retailer B",full:"Natural Retailer B",color:"#185FA5",r:10,tier:0,type_label:"Retailer",desc:"Formal partnership with a regenerative beef brand for supply chain sourcing."},
+  {id:"naturalgro",label:"Natural Retailer C",full:"Natural Retailer C",color:"#185FA5",r:9,tier:0,type_label:"Retailer",desc:"Formal partnership with a leading regenerative agriculture research institution. Carries certified regenerative products."},
+  {id:"walmart",label:"Mass Retailer A",full:"Mass Retailer A",color:"#185FA5",r:12,tier:0,type_label:"Retailer",desc:"Three-way formal partnership with a global food company and conservation fund targeting 600,000 acres of regenerative agriculture by 2030."},
+  {id:"newseason",label:"Indie Retailer A",full:"Independent Retailer A",color:"#185FA5",r:9,tier:0,type_label:"Retailer",desc:"Formal partnership with a restaurant-funded farm grant organization for regenerative sourcing."},
+  {id:"chipotle",label:"Restaurant Chain A",full:"Restaurant Chain A",color:"#185FA5",r:10,tier:0,type_label:"Restaurant chain",desc:"Co-investments in robotic weeding technology and green nitrogen technology. Active regenerative ag sourcing program."},
+  {id:"ahold",label:"Grocery Retailer A",full:"Grocery Retailer A",color:"#185FA5",r:11,tier:0,type_label:"Retailer",desc:"Co-investment with a global food company in priority supply sheds (two North American regions). Outcomes finance org is implementing partner. Target: 70,000 acres by end of 2025."},
+  {id:"genmills",label:"Global CPG Co. A",full:"Global CPG Company A",color:"#6a1b9a",r:13,tier:1,type_label:"CPG brand",desc:"5-coalition connector. Formal partnerships with farmland protection NGO (600K regen acres by 2030), mass retailer, and grocery retailer. Outcomes finance org as implementing partner."},
+  {id:"vitfarms",label:"Pasture-Raised Brand A",full:"Pasture-Raised Brand A",color:"#6a1b9a",r:10,tier:1,type_label:"Pasture-raised brand",desc:"Formal partnership with a third-party regenerative verification body. Sourcing standard and trade association member."},
+  {id:"wildfarmd",label:"Regen Grain Brand A",full:"Regenerative Grain Brand A",color:"#6a1b9a",r:9,tier:1,type_label:"Regen grain brand",desc:"Formal partnership with a carbon forum. Participated in global food company regenerative framework pilot across 25 countries."},
+  {id:"teton",label:"Regen Beef Brand A",full:"Regenerative Beef Brand A",color:"#6a1b9a",r:9,tier:1,type_label:"Regen beef brand",desc:"100% grass-fed regenerative beef brand. Formal partnerships with two major natural grocery retailers."},
+  {id:"kindsnk",label:"Snack Brand A",full:"Snack Brand A",color:"#6a1b9a",r:9,tier:1,type_label:"Snack brand",desc:"Formal partnership with a regenerative research farm for ingredient supply chain transition."},
+  {id:"applegate",label:"Meat Brand A",full:"Meat Brand A",color:"#6a1b9a",r:9,tier:1,type_label:"Meat brand",desc:"Formal partnership with a regenerative advocacy NGO. Sourcing standard, trade association, and Farm Bill coalition member."},
+  {id:"adm",label:"Agri-Commodity Co. A",full:"Agri-Commodity Company A",color:"#6a1b9a",r:11,tier:1,type_label:"Commodity trader",desc:"4M acres regen enrollment. Formal partnership with a farmer platform (verified regen grain program). Supply chain GHG programme with agritech platform in Germany (25,000 ha). COP28 coalition participant."},
+  {id:"nestle",label:"Global Food Co. A",full:"Global Food Company A",color:"#6a1b9a",r:11,tier:1,type_label:"CPG brand",desc:"Outcomes-based regen finance partnership (230 farmers, 13,000 ha, France/Belgium/UK). Two NGO implementing partner programs across 5 European countries. Global regenerative framework pilot."},
+  {id:"pepsico",label:"Global Beverage Co. A",full:"Global Beverage Company A",color:"#6a1b9a",r:12,tier:1,type_label:"CPG brand",desc:"Highest BC (0.252) of any individual company. Three-way program with Spice Co. A and outcomes finance org (80,000+ acres). Climate-smart crop warranty program (~1M acres). Ag finance platform EU partnership."},
+  {id:"mccormick",label:"Spice Co. A",full:"Spice Company A",color:"#6a1b9a",r:9,tier:1,type_label:"Spice brand",desc:"Three-way regen ag partnership with Global Beverage Co. A and outcomes finance org: 100+ farmers, 80,000+ acres, 50,000+ metric tons GHG abated in year one."},
+  {id:"mars",label:"Global Confectionery A",full:"Global Confectionery Company A",color:"#6a1b9a",r:10,tier:1,type_label:"CPG brand",desc:"5-year cocoa supply chain partnership with Global Ingredient Co. A (960+ farmers, 9,000+ ha). Argentina peanut initiative with Ag Finance Platform A. Pet food brand subsidiary (France, 46,000 ha)."},
+  {id:"ofi",label:"Global Ingredient Co. A",full:"Global Ingredient Company A",color:"#6a1b9a",r:8,tier:1,type_label:"Ingredient supplier",desc:"5-year cocoa regen partnership with Global Confectionery A (960+ farmers, 9,000+ ha). COP28 coalition participant and certification coalition member. BC=0.179."},
+  {id:"lvmh",label:"Luxury Group A",full:"Luxury Group A",color:"#6a1b9a",r:10,tier:1,type_label:"Luxury brand",desc:"Group-wide sustainability framework. Regenerative leather project (6 pillars). Regenerative wool program with fiber supplier. Regenerative cotton program with textile co. Fiber standards and sourcing standard member."},
+  {id:"wopas",label:"Regen Farm A",full:"Regenerative Farm A",color:"#3B6D11",r:11,tier:2,type_label:"Regenerative farm",desc:"Flagship multi-species regenerative farm. Sourcing standard verified. Certification coalition founding member. Widely cited as a model for holistic planned grazing at scale."},
+  {id:"alexandrefm",label:"Regen Dairy Farm A",full:"Regenerative Dairy Farm A",color:"#3B6D11",r:9,tier:2,type_label:"Regenerative farm",desc:"Organic dairy and egg farm. Sourcing standard verified and certification-program certified. First certified dairy farm in the certification program."},
+  {id:"polyface",label:"Regen Farm B",full:"Regenerative Farm B",color:"#3B6D11",r:9,tier:2,type_label:"Regenerative farm",desc:"Multi-species pasture-raised farm. Formal partnership with a federal agency. Widely referenced as a model regenerative production system."},
+  {id:"farmlandlp",label:"Farmland Fund A",full:"Farmland Fund A",color:"#3B6D11",r:9,tier:2,type_label:"Farmland fund",desc:"Converts conventional farmland to certified organic. Formal partnerships with carbon verification firm and carbon registry. Co-investment from a major technology company ($250M)."},
+  {id:"regenven",label:"Regen Transition Program A",full:"Regen Transition Program A",color:"#3B6D11",r:9,tier:2,type_label:"Transition program",desc:"Research NGO initiative. $2.55M philanthropic-funded. 57 farms in pipeline, 10,000 acres in transition. County-scale model for regenerative transition."},
+  {id:"klim",label:"AgTech Platform A",full:"AgTech Platform A",color:"#3B6D11",r:8,tier:2,type_label:"AgTech platform",desc:"Digital agronomy platform. Supply chain GHG programme partner with Agri-Commodity Co. A in Germany (25,000 ha). Field-level data, GHG measurement, soil sampling."},
+  {id:"soilcap",label:"Ag Finance Platform A",full:"Ag Finance Platform A",color:"#3B6D11",r:11,tier:2,type_label:"Ag finance platform",desc:"9 total edges \u2014 emerging network hub. Formal partnerships: Global Beverage Co. A (EU), Global Food Co. A (13,000 ha), Pet Food Brand A (46,000 ha), Global Confectionery A (peanuts), Global Framework A, Commercial Bank A."},
+  {id:"regenified",label:"Verification Body A",full:"Verification Body A",color:"#888780",r:10,tier:3,type_label:"Certification body",desc:"Third-party regenerative agriculture verification body. Formal partnerships with a pasture-raised brand, poultry farm, and commodity trader soil health program."},
+  {id:"verra",label:"Carbon Registry A",full:"Carbon Registry A",color:"#888780",r:9,tier:3,type_label:"Carbon registry",desc:"Voluntary carbon market registry. Formal partnerships with farmland fund and soil measurement program for soil carbon verification."},
+  {id:"esmc",label:"Outcomes Finance A",full:"Outcomes Finance Organization A",color:"#888780",r:9,tier:3,type_label:"Outcomes finance",desc:"Implementing partner for Global CPG Co. A and Grocery Retailer A supply shed co-investment. Provides farmer technical and financial support and GHG calculations."},
+  {id:"swof",label:"Outcomes Finance B",full:"Outcomes Finance Organization B",color:"#888780",r:9,tier:3,type_label:"Outcomes finance",desc:"Iowa-based outcomes finance org. Implementing partner for Spice Co. A and Global Beverage Co. A three-way program. Farmer financial incentives, agronomic support, data collection."},
+  {id:"earthworm",label:"Implementation NGO A",full:"Implementation NGO A",color:"#888780",r:8,tier:3,type_label:"NGO",desc:"Runs regen farmer transition programme in France for global food company. Also co-leads farmer advisory initiative with two major FMCG companies."},
+  {id:"threekeel",label:"Sustainability Consultancy A",full:"Sustainability Consultancy A",color:"#888780",r:7,tier:3,type_label:"Consultancy",desc:"Runs Landscape Enterprise Networks programme for a global food company across UK, Hungary, Poland, and Italy."},
+  {id:"zerofp",label:"Farm Grant NGO A",full:"Farm Grant NGO A",color:"#888780",r:8,tier:3,type_label:"NGO",desc:"Restaurant-funded regenerative farm grant organization. Formal partnership with Independent Retailer A."},
+  {id:"amftrust",label:"Farmland NGO A",full:"Farmland Protection NGO A",color:"#888780",r:9,tier:3,type_label:"NGO",desc:"Formal partnership with Global CPG Co. A for 600K regenerative acres by 2030 with Mass Retailer A. Conservation fund grantee 2026."},
+  {id:"wolfes",label:"Research Farm A",full:"Research Farm A",color:"#888780",r:7,tier:3,type_label:"Research farm / NGO",desc:"Research and education farm. Formal partnerships with Snack Brand A and advocacy NGO."},
+  {id:"rodale",label:"Research NGO A",full:"Research NGO A",color:"#3B6D11",r:10,tier:3,type_label:"Research / NGO",desc:"Certification coalition founding member. Formal partnerships with Natural Retailer C, university partner. Operates county-scale regen transition program ($2.55M philanthropic-funded, 57 farms, 10,000 acres)."},
+  {id:"kissground",label:"Advocacy NGO A",full:"Advocacy NGO A",color:"#3B6D11",r:9,tier:3,type_label:"NGO / Advocacy",desc:"Stewards a Farm Bill policy coalition. Formal partnerships with Meat Brand A and fashion retailer. Research farm partner."},
+  {id:"fbn",label:"Farmer Platform A",full:"Farmer Platform A",color:"#888780",r:9,tier:3,type_label:"Farmer platform",desc:"Formal partnership with Agri-Commodity Co. A for verified regenerative grain program. Connects farmers to grain buyers."},
+];
+const EDGES = [
+  {s:"wfm",t:"teton",type:"formal"},
+  {s:"sprts",t:"teton",type:"formal"},
+  {s:"wfm",t:"applegate",type:"colmem"},
+  {s:"wfm",t:"wildfarmd",type:"colmem"},
+  {s:"newseason",t:"zerofp",type:"formal"},
+  {s:"naturalgro",t:"rodale",type:"formal"},
+  {s:"walmart",t:"genmills",type:"formal"},
+  {s:"chipotle",t:"soilcap",type:"colmem"},
+  {s:"genmills",t:"amftrust",type:"formal"},
+  {s:"genmills",t:"ahold",type:"formal"},
+  {s:"ahold",t:"esmc",type:"formal"},
+  {s:"genmills",t:"esmc",type:"formal"},
+  {s:"vitfarms",t:"regenified",type:"formal"},
+  {s:"kindsnk",t:"wolfes",type:"formal"},
+  {s:"applegate",t:"kissground",type:"formal"},
+  {s:"adm",t:"fbn",type:"formal"},
+  {s:"adm",t:"klim",type:"formal"},
+  {s:"adm",t:"regenified",type:"colmem"},
+  {s:"pepsico",t:"mccormick",type:"formal"},
+  {s:"pepsico",t:"swof",type:"formal"},
+  {s:"mccormick",t:"swof",type:"formal"},
+  {s:"pepsico",t:"soilcap",type:"formal"},
+  {s:"nestle",t:"soilcap",type:"formal"},
+  {s:"nestle",t:"earthworm",type:"formal"},
+  {s:"nestle",t:"threekeel",type:"formal"},
+  {s:"mars",t:"ofi",type:"formal"},
+  {s:"mars",t:"soilcap",type:"formal"},
+  {s:"lvmh",t:"soilcap",type:"colmem"},
+  {s:"wildfarmd",t:"nestle",type:"colmem"},
+  {s:"wopas",t:"rodale",type:"colmem"},
+  {s:"polyface",t:"rodale",type:"colmem"},
+  {s:"farmlandlp",t:"verra",type:"formal"},
+  {s:"regenven",t:"rodale",type:"formal"},
+  {s:"kissground",t:"wolfes",type:"formal"},
+  {s:"kissground",t:"wfm",type:"colmem"},
+  {s:"genmills",t:"walmart",type:"formal"},
+  {s:"rodale",t:"naturalgro",type:"formal"},
 ];
 
-const LINKS = [
-  {s:'wfm',t:'teton',w:2,op:.55,c:'#185FA5'},{s:'sprts',t:'teton',w:2,op:.55,c:'#185FA5'},
-  {s:'wfm',t:'madagric',w:2,op:.55,c:'#185FA5'},{s:'wfm',t:'sclimate',w:1.5,op:.45,c:'#185FA5'},
-  {s:'newseason',t:'zerofp',w:1.5,op:.45,c:'#185FA5'},{s:'naturalgro',t:'rodale',w:1.5,op:.45,c:'#185FA5'},
-  {s:'walmart',t:'genmills',w:2,op:.45,c:'#185FA5'},{s:'chipotle',t:'madagric',w:1.5,op:.4,c:'#6a1b9a',d:'5,3'},
-  {s:'genmills',t:'amftrust',w:2,op:.55,c:'#6a1b9a'},{s:'genmills',t:'wfm',w:1.5,op:.35,c:'#6a1b9a',d:'5,3'},
-  {s:'genmills',t:'rodale',w:1.5,op:.35,c:'#6a1b9a',d:'5,3'},{s:'vitfarms',t:'regenified',w:2,op:.55,c:'#6a1b9a'},
-  {s:'diestel',t:'regenified',w:1.5,op:.45,c:'#97C459'},{s:'kindsnk',t:'wolfe',w:2,op:.55,c:'#6a1b9a'},
-  {s:'applegate',t:'kissground',w:2,op:.55,c:'#6a1b9a'},{s:'wildfarmd',t:'wfm',w:1.5,op:.35,c:'#6a1b9a',d:'5,3'},
-  {s:'wopas',t:'rodale',w:1.5,op:.35,c:'#97C459',d:'5,3'},{s:'farmlandlp',t:'verra',w:1.5,op:.45,c:'#97C459'},
-  {s:'farmlandlp',t:'wfm',w:1.5,op:.35,c:'#97C459',d:'5,3'},{s:'adm',t:'fbn',w:2,op:.55,c:'#6a1b9a'},
-  {s:'adm',t:'genmills',w:1.5,op:.35,c:'#6a1b9a',d:'5,3'},{s:'alexandrefm',t:'wopas',w:1.5,op:.35,c:'#97C459',d:'5,3'},
-  {s:'polyface',t:'rodale',w:1.5,op:.35,c:'#97C459',d:'5,3'},{s:'rodale',t:'kissground',w:1.5,op:.35,c:'#3B6D11',d:'5,3'},
-  {s:'regenified',t:'adm',w:1.5,op:.35,c:'#888780',d:'5,3'},{s:'cmiorchards',t:'farmlandlp',w:1.5,op:.35,c:'#97C459',d:'5,3'},
-  {s:'pccmkt',t:'wfm',w:1,op:.18,c:'#185FA5',d:'3,4'},{s:'momsorg',t:'wfm',w:1,op:.18,c:'#185FA5',d:'3,4'},
-  {s:'kissground',t:'wolfe',w:1.5,op:.35,c:'#3B6D11',d:'5,3'},{s:'kissground',t:'wfm',w:1.5,op:.35,c:'#3B6D11',d:'5,3'},
-  {s:'madagric',t:'rodale',w:1.5,op:.35,c:'#6a1b9a',d:'5,3'},
-];
-
-const typeOrder={'Retailer':0,'Restaurant chain':0,'CPG brand':1,'Commodity trader':1,'Regen support platform':1,'Pasture-raised brand':1,'Regen grain brand':1,'Regen beef brand':1,'Snack brand':1,'Meat brand':1,'Regenerative farm':2,'Farmland fund':2,'Regen farm / brand':2,'Organic produce':2,'Regen poultry farm':2,'Regen dairy farm':2,'Certification body':3,'Carbon registry':3,'NGO':3,'Farmer platform':3,'Research farm / NGO':3,'Research / NGO':4,'NGO / advocacy':4};
-const yOffset=d=>{const tier=typeOrder[d.type]??2;return(tier-2)*90;};
-
-const W=()=>document.getElementById('canvas').clientWidth;
-const H=()=>document.getElementById('canvas').clientHeight;
-const svg=d3.select('#svg');
-const g=svg.append('g');
-const zoom=d3.zoom().scaleExtent([0.3,3]).on('zoom',e=>g.attr('transform',e.transform));
-svg.call(zoom);
-NODES.forEach(n=>{n.x=W()/2+(Math.random()-.5)*300;n.y=H()/2+(Math.random()-.5)*300;});
-const links=LINKS.map(l=>({...l,source:l.s,target:l.t}));
-const sim=d3.forceSimulation(NODES)
-  .force('link',d3.forceLink(links).id(d=>d.id).distance(85).strength(0.4))
-  .force('charge',d3.forceManyBody().strength(-240))
-  .force('center',d3.forceCenter(W()/2,H()/2))
-  .force('y',d3.forceY(d=>H()/2+yOffset(d)).strength(0.25))
-  .force('collision',d3.forceCollide().radius(d=>d.r+14));
-const linkSel=g.append('g').selectAll('line').data(links).join('line')
-  .attr('stroke',d=>d.c).attr('stroke-width',d=>d.w)
-  .attr('stroke-opacity',d=>d.op).attr('stroke-dasharray',d=>d.d||null);
-const nodeSel=g.append('g').selectAll('g').data(NODES).join('g').style('cursor','pointer')
-  .call(d3.drag()
-    .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
-    .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y})
-    .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null}));
-nodeSel.append('circle').attr('r',d=>d.r).attr('fill',d=>d.color)
-  .attr('fill-opacity',.82).attr('stroke',d=>d.color)
-  .attr('stroke-width',1.5).attr('stroke-opacity',.65);
-// Wrap label below a node circle.
-function wrapBelow(textEl, label, radius) {
-  const sz           = 9.5;
-  const charW        = sz * 0.52;
-  const maxW         = 72;
-  const lineH        = sz * 1.25;
-  const charsPerLine = Math.max(1, Math.floor(maxW / charW));
-  const words = label.split(' ');
-  const lines = [];
-  let line = [];
-  for (const w of words) {
-    if ([...line, w].join(' ').length > charsPerLine && line.length > 0) {
-      lines.push(line.join(' ')); line = [w];
-    } else { line.push(w); }
+// ── helpers ──────────────────────────────────────────────────────────────────
+function wrapNode(textEl, label, radius, isHub) {
+  if (isHub) {
+    const sizes = [9, 8, 7, 6.5, 6];
+    const maxW = radius * 1.55;
+    const lineH = 1.25;
+    for (const sz of sizes) {
+      const charW = sz * 0.52;
+      const charsPerLine = Math.max(1, Math.floor(maxW / charW));
+      const words = label.split(' ');
+      const lines = [];
+      let line = [];
+      for (const w of words) {
+        const candidate = [...line, w].join(' ');
+        if (candidate.length > charsPerLine && line.length > 0) { lines.push(line.join(' ')); line = [w]; }
+        else { line.push(w); }
+      }
+      if (line.length) lines.push(line.join(' '));
+      const longestChars = Math.max(...lines.map(l => l.length));
+      if (longestChars * charW <= maxW || sz === sizes[sizes.length - 1]) {
+        const totalH = (lines.length - 1) * sz * lineH;
+        lines.forEach((ln, i) => {
+          textEl.append('tspan').attr('x', 0)
+            .attr('dy', i === 0 ? -totalH / 2 + 'px' : sz * lineH + 'px').text(ln);
+        });
+        textEl.attr('font-size', sz + 'px');
+        return;
+      }
+    }
+  } else {
+    const sz = 9, charW = 9 * 0.52, maxW = 76, lineH = 9 * 1.25;
+    const charsPerLine = Math.max(1, Math.floor(maxW / charW));
+    const words = label.split(' ');
+    const lines = [];
+    let line = [];
+    for (const w of words) {
+      const candidate = [...line, w].join(' ');
+      if (candidate.length > charsPerLine && line.length > 0) { lines.push(line.join(' ')); line = [w]; }
+      else { line.push(w); }
+    }
+    if (line.length) lines.push(line.join(' '));
+    lines.forEach((ln, i) => {
+      textEl.append('tspan').attr('x', 0)
+        .attr('dy', i === 0 ? (radius + 11) + 'px' : lineH + 'px').text(ln);
+    });
+    textEl.attr('font-size', sz + 'px');
   }
-  if (line.length) lines.push(line.join(' '));
-  lines.forEach((ln, i) => {
-    textEl.append('tspan')
-      .attr('x', 0)
-      .attr('dy', i === 0 ? (radius + 11) + 'px' : lineH + 'px')
-      .text(ln);
-  });
-  textEl.attr('font-size', sz + 'px');
 }
 
-nodeSel.append('text').attr('text-anchor','middle')
-  .attr('font-family','DM Sans, sans-serif')
-  .attr('fill','#626057').attr('font-weight','300').attr('pointer-events','none')
-  .each(function(d) { wrapBelow(d3.select(this), d.label, d.r); });
-sim.on('tick',()=>{
-  linkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
-  nodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);
+// ── layout ────────────────────────────────────────────────────────────────────
+const W = () => document.getElementById('canvas').clientWidth;
+const H = () => document.getElementById('canvas').clientHeight;
+const svg = d3.select('#svg');
+const g   = svg.append('g');
+const zoom = d3.zoom().scaleExtent([0.25, 3]).on('zoom', e => g.attr('transform', e.transform));
+svg.call(zoom);
+
+// Tier Y positions: 0=retailers/foodservice, 1=CPG/brands/traders, 2=farms/land, 3=verification/NGO
+const TIER_LABELS = ['Retailers & Foodservice', 'Brands & Traders', 'Farms & Land', 'Verification & NGO'];
+const tierColor = ['#185FA5','#6a1b9a','#97C459','#888780'];
+
+function tierY(tier) {
+  const h = H();
+  const topPad = 60, botPad = 60;
+  const usable = h - topPad - botPad;
+  return topPad + (tier / 3) * usable;
+}
+
+// Initial placement
+NODES.forEach(n => {
+  n.x = W() / 2 + (Math.random() - 0.5) * W() * 0.7;
+  n.y = tierY(n.tier) + (Math.random() - 0.5) * 40;
 });
-let sel=null;
-const panel=document.getElementById('panel');
-nodeSel.on('click',function(event,d){
+
+// Build link objects
+const links = EDGES.map(e => ({
+  source: e.s, target: e.t, type: e.type, // 'formal' or 'colmem'
+}));
+
+// Pre-sim: push nodes apart within each tier, anchor to tier Y
+const simNodes = NODES.map(d => Object.assign({}, d));
+const simLinks = links.map(l => ({
+  source: simNodes.find(n => n.id === l.source),
+  target: simNodes.find(n => n.id === l.target),
+  type: l.type
+})).filter(l => l.source && l.target);
+
+const presim = d3.forceSimulation(simNodes)
+  .force('collide', d3.forceCollide().radius(d => d.r + 28).strength(0.85).iterations(5))
+  .force('link', d3.forceLink(simLinks).id(d => d.id).distance(120).strength(0.05))
+  .force('y', d3.forceY(d => tierY(d.tier)).strength(0.6))
+  .force('x', d3.forceX(W() / 2).strength(0.02))
+  .stop();
+for (let i = 0; i < 300; i++) presim.tick();
+simNodes.forEach(sn => {
+  const real = NODES.find(n => n.id === sn.id);
+  if (real) { real.x = sn.x; real.y = sn.y; }
+});
+
+// ── render ─────────────────────────────────────────────────────────────────
+// Tier label lines
+const tierG = g.append('g');
+[0,1,2,3].forEach(t => {
+  tierG.append('line')
+    .attr('x1', 0).attr('x2', W())
+    .attr('y1', tierY(t)).attr('y2', tierY(t))
+    .attr('stroke', tierColor[t]).attr('stroke-opacity', 0.08)
+    .attr('stroke-width', 1).attr('stroke-dasharray', '4,4');
+  tierG.append('text')
+    .attr('x', 10).attr('y', tierY(t) - 5)
+    .attr('font-family', 'DM Sans, sans-serif').attr('font-size', '10px')
+    .attr('fill', tierColor[t]).attr('fill-opacity', 0.5)
+    .attr('font-weight', '300').text(TIER_LABELS[t]);
+});
+
+const linkMap = {};
+NODES.forEach(n => { linkMap[n.id] = n; });
+
+const linkSel = g.append('g').selectAll('line').data(links).join('line')
+  .attr('stroke', d => {
+    const sn = linkMap[d.source]; return sn ? sn.color : '#888780';
+  })
+  .attr('stroke-width', d => d.type === 'formal' ? 2 : 1)
+  .attr('stroke-opacity', d => d.type === 'formal' ? 0.45 : 0.20)
+  .attr('stroke-dasharray', d => d.type === 'colmem' ? '4,3' : null)
+  .attr('x1', d => (linkMap[d.source] || {}).x || 0)
+  .attr('y1', d => (linkMap[d.source] || {}).y || 0)
+  .attr('x2', d => (linkMap[d.target] || {}).x || 0)
+  .attr('y2', d => (linkMap[d.target] || {}).y || 0);
+
+const nodeSel = g.append('g').selectAll('g').data(NODES).join('g')
+  .attr('transform', d => `translate(${d.x},${d.y})`)
+  .style('cursor', 'pointer');
+
+nodeSel.append('circle')
+  .attr('r', d => d.r)
+  .attr('fill', d => d.color)
+  .attr('fill-opacity', 0.82)
+  .attr('stroke', d => d.color)
+  .attr('stroke-width', 1.5)
+  .attr('stroke-opacity', 0.65);
+
+nodeSel.append('text')
+  .attr('text-anchor', 'middle')
+  .attr('font-family', 'DM Sans, sans-serif')
+  .attr('font-weight', '300')
+  .attr('fill', '#1c2420')
+  .attr('pointer-events', 'none')
+  .each(function(d) { wrapNode(d3.select(this), d.label, d.r, false); });
+
+// ── interaction ───────────────────────────────────────────────────────────────
+let selected = null;
+const panel = document.getElementById('panel');
+
+function resetAll() {
+  nodeSel.classed('node-dim', false);
+  linkSel.classed('link-dim', false).classed('link-active', false)
+    .attr('stroke-opacity', d => d.type === 'formal' ? 0.45 : 0.20);
+  panel.classList.remove('vis');
+  selected = null;
+}
+
+nodeSel.on('click', function(event, d) {
   event.stopPropagation();
-  if(sel===d.id){reset();return;}
-  sel=d.id;
-  const conn=new Set([d.id]);
-  links.forEach(l=>{if(l.source.id===d.id)conn.add(l.target.id);if(l.target.id===d.id)conn.add(l.source.id);});
-  nodeSel.classed('node-dim',n=>!conn.has(n.id));
-  linkSel.attr('stroke-opacity',l=>conn.has(l.source.id)&&conn.has(l.target.id)?Math.min((l.op||.35)*2.8,.9):.04);
-  document.getElementById('p-tag').textContent=d.type;
-  document.getElementById('p-name').textContent=d.full||d.label;
-  document.getElementById('p-desc').textContent=d.desc;
-  document.getElementById('p-stats').innerHTML=`<div class="ps"><span class="ps-v">${conn.size-1}</span><span class="ps-l">connections</span></div>`;
+  if (selected === d.id) { resetAll(); return; }
+  selected = d.id;
+  const conn = new Set([d.id]);
+  links.forEach(l => {
+    if (l.source === d.id) conn.add(l.target);
+    if (l.target === d.id) conn.add(l.source);
+  });
+  nodeSel.classed('node-dim', nd => !conn.has(nd.id));
+  linkSel.classed('link-dim',    ld => !conn.has(ld.source) || !conn.has(ld.target));
+  linkSel.classed('link-active', ld => conn.has(ld.source) && conn.has(ld.target) && (ld.source === d.id || ld.target === d.id));
+  document.getElementById('p-tag').textContent  = d.type_label || d.tier_label || 'Organization';
+  document.getElementById('p-name').textContent = d.full || d.label;
+  document.getElementById('p-desc').textContent = d.desc || '';
+  document.getElementById('p-stats').innerHTML =
+    `<div class="ps"><span class="ps-v">${conn.size - 1}</span><span class="ps-l">connections</span></div>`;
   panel.classList.add('vis');
 });
-svg.on('click',reset);
-function reset(){sel=null;nodeSel.classed('node-dim',false);linkSel.attr('stroke-opacity',d=>d.op);panel.classList.remove('vis');}
-window.addEventListener('resize',()=>{sim.force('center',d3.forceCenter(W()/2,H()/2)).alpha(0.1).restart();});
+
+svg.on('click', resetAll);
+
 </script>
 </body>
 </html>
