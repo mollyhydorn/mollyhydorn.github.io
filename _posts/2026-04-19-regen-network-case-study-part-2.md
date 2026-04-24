@@ -22,7 +22,7 @@ The second phase asked a harder one: how are they connected, and what does the s
 
 To move from landscape to network, I mapped the membership relationships between organizations and the multi-stakeholder coalitions that have become a defining structural feature of the regenerative agriculture space. Coalitions like the Regenerative Organic Alliance, the LEAF Coalition, and the Sustainable Food Policy Alliance don't just convene organizations: they create edges. Shared membership is a proxy for shared agenda, and in aggregate those memberships reveal the underlying architecture of the ecosystem.
 
-The result was a network of 806 connected organizations, anchored by 13 coalition hubs, embedded within the broader 3,000-organization landscape. The anonymized version of that map is below.
+The result was a network of 737 connected organizations, anchored by 13 coalition hubs, embedded within the broader 3,000-plus organization landscape. The anonymized version of that map is below.
 
 <div style="margin: 32px 0; border: 1px solid #e0ddd4; border-radius: 4px; overflow: hidden;">
   <iframe
@@ -50,11 +50,13 @@ A few findings stood out.
 
 **The largest players are not always the most structurally important.** Conventional market logic would suggest that the biggest brands or most-capitalized investors are the most influential actors. Network logic often disagrees. Structural influence is a function of position, not size, and some mid-sized organizations occupy bridging positions that give them outsized leverage in how information, capital, and relationships flow through the ecosystem.
 
-**Most of the landscape remains unconnected.** The 578-node connected component is embedded in a landscape of 3,000-plus organizations, the majority of which have no logged connections to anyone else. This isn't a failure of the database. It reflects the actual state of the ecosystem: a large share of farms, regional investors, and emerging technology companies operate without public formal ties to the coalitions and networks that structure the space at scale.
+**Most of the landscape remains unconnected.** The 737-node connected component is embedded in a landscape of 3,000-plus organizations, the majority of which have no logged connections to anyone else. This isn't a failure of the database. It reflects the actual state of the ecosystem: a large share of farms, regional investors, and emerging technology companies operate without public formal ties to the coalitions and networks that structure the space at scale.
 <figure style="margin: 32px 0;">
-  <img src="/assets/landscape-connectivity-donut.svg" alt="82% of mapped organizations have no logged network connections" style="max-width: 500px; width: 100%;">
-  <figcaption style="font-size: 13px; color: #888; margin-top: 8px;">Of 3,258 organizations in the landscape database, only 578 have logged connections to the coalition network.</figcaption>
+  <img src="/assets/landscape-connectivity-donut.svg" alt="78% of mapped organizations have no logged network connections" style="max-width: 500px; width: 100%;">
+  <figcaption style="font-size: 13px; color: #888; margin-top: 8px;">Of 3,293 organizations in the landscape database, only 737 have logged connections to the coalition network.</figcaption>
 </figure>
+
+**Not all structural hubs are coalitions.** The coalition hub model captures most of the ecosystem's structural architecture, but the network data surfaces a second pattern worth naming. A small number of non-coalition actors — companies that function as measurement platforms, finance vehicles, or implementing partners rather than convening bodies — appear to accumulate structural centrality through repeated bilateral partnerships rather than through shared membership. Where a coalition aggregates members around a shared agenda, these actors aggregate customers around a shared technical function. The network effect is similar: organizations that independently need the same tool end up connected through the same node, even without a membership structure to formalize the relationship. This suggests that structural influence in an ecosystem like this one can emerge from functional indispensability as well as from convening, and that the distinction between coalition hubs and platform hubs is worth tracking as the network matures.
 
 ---
 

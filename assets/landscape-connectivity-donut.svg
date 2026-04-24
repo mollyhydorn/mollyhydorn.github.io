@@ -1,46 +1,39 @@
-<svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" role="img" width="100%" style="max-width:500px;display:block;">
-  <title>Landscape connectivity</title>
-  <desc>Donut chart showing 578 connected organizations (18%) versus 2,680 unconnected (82%) out of 3,258 total mapped.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380" width="320" height="380"
+     style="font-family: DM Sans, sans-serif; background: transparent;">
 
-  <style>
-    .label-main { font: 500 28px system-ui, sans-serif; fill: #1a1a18; }
-    .label-sub  { font: 400 11px system-ui, sans-serif; fill: #73726c; }
-    .label-cat  { font: 400 12px system-ui, sans-serif; fill: #73726c; }
-    .label-total-n { font: 500 18px system-ui, sans-serif; fill: #1a1a18; }
-    .label-total-l { font: 400 10px system-ui, sans-serif; fill: #73726c; letter-spacing: 0.05em; }
-    .swatch { rx: 2; }
-  </style>
+  <!-- Donut slices -->
+  <path d="M 160.00,42.00 A 118,118 0 1,1 43.59,140.67 L 87.00,147.88 A 74,74 0 1,0 160.00,86.00 Z"
+        fill="#c8d5c0" opacity="0.55"/>
+  <path d="M 43.59,140.67 A 118,118 0 0,1 160.00,42.00 L 160.00,86.00 A 74,74 0 0,0 87.00,147.88 Z"
+        fill="#3B6D11" opacity="0.88"/>
 
-  <circle cx="110" cy="110" r="90"
-    fill="none"
-    stroke="#B4B2A9"
-    stroke-width="36"
-    stroke-dasharray="463.7 101.8"
-    stroke-dashoffset="0"
-    transform="rotate(-90 110 110)" />
+  <!-- Centre text -->
+  <text x="160" y="144" text-anchor="middle"
+        font-size="32" font-weight="500" fill="#1c2420"
+        style="font-family: DM Serif Display, serif;">78%</text>
+  <text x="160" y="168" text-anchor="middle"
+        font-size="11.5" font-weight="300" fill="#5a6b62"
+        letter-spacing="0.01em">of organizations</text>
+  <text x="160" y="184" text-anchor="middle"
+        font-size="11.5" font-weight="300" fill="#5a6b62"
+        letter-spacing="0.01em">have no logged</text>
+  <text x="160" y="200" text-anchor="middle"
+        font-size="11.5" font-weight="300" fill="#5a6b62"
+        letter-spacing="0.01em">connections</text>
 
-  <circle cx="110" cy="110" r="90"
-    fill="none"
-    stroke="#1D9E75"
-    stroke-width="36"
-    stroke-dasharray="101.8 463.7"
-    stroke-dashoffset="0"
-    transform="rotate(-90 110 110)" />
+  <!-- Legend below chart -->
+  <rect x="54" y="270" width="12" height="12" rx="2" fill="#3B6D11" opacity="0.88"/>
+  <text x="72" y="281" font-size="12" fill="#1c2420" font-weight="400">737 connected</text>
+  <text x="72" y="296" font-size="11" fill="#5a6b62" font-weight="300">to the coalition network</text>
 
-  <text x="110" y="104" text-anchor="middle" class="label-main">18%</text>
-  <text x="110" y="122" text-anchor="middle" class="label-sub">connected</text>
+  <rect x="54" y="312" width="12" height="12" rx="2" fill="#c8d5c0" opacity="0.8"/>
+  <text x="72" y="323" font-size="12" fill="#1c2420" font-weight="400">2,556 unconnected</text>
+  <text x="72" y="338" font-size="11" fill="#5a6b62" font-weight="300">WhyRegen base; no logged edges</text>
 
-  <rect x="240" y="28" width="10" height="10" fill="#1D9E75" class="swatch"/>
-  <text x="256" y="38" class="label-cat">Connected to the network</text>
-  <text x="240" y="72" class="label-main">578</text>
-  <text x="240" y="88" class="label-sub">18% of landscape</text>
+  <!-- Total label -->
+  <text x="160" y="368" text-anchor="middle" font-size="10.5"
+        fill="#8a9b8a" font-weight="300">
+    of 3,293 total organizations mapped
+  </text>
 
-  <rect x="240" y="112" width="10" height="10" fill="#B4B2A9" class="swatch"/>
-  <text x="256" y="122" class="label-cat">No logged connections</text>
-  <text x="240" y="156" class="label-main">2,680</text>
-  <text x="240" y="172" class="label-sub">82% of landscape</text>
-
-  <line x1="240" y1="186" x2="500" y2="186" stroke="#d3d1c7" stroke-width="0.5"/>
-  <text x="240" y="198" class="label-total-l">TOTAL ORGANIZATIONS MAPPED</text>
-  <text x="240" y="214" class="label-total-n">3,258</text>
 </svg>
