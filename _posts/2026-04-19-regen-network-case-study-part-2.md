@@ -22,7 +22,7 @@ The second phase asked a harder one: how are they connected, and what does the s
 
 To move from landscape to network, I mapped the membership relationships between organizations and the multi-stakeholder coalitions that have become a defining structural feature of the regenerative agriculture space. Coalitions like the Regenerative Organic Alliance, the LEAF Coalition, and the Sustainable Food Policy Alliance don't just convene organizations: they create edges. Shared membership is a proxy for shared agenda, and in aggregate those memberships reveal the underlying architecture of the ecosystem.
 
-The result was a network of 578 connected organizations, anchored by 13 coalition hubs, embedded within the broader 3,000-organization landscape. The anonymized version of that map is below.
+The result was a network of 806 connected organizations, anchored by 13 coalition hubs, embedded within the broader 3,000-organization landscape. The anonymized version of that map is below.
 
 <div style="margin: 32px 0; border: 1px solid #e0ddd4; border-radius: 4px; overflow: hidden;">
   <iframe
