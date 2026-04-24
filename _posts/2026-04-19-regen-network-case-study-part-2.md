@@ -52,7 +52,7 @@ A few findings stood out.
 
 **Most of the landscape remains unconnected.** The 737-node connected component is embedded in a landscape of 3,000-plus organizations, the majority of which have no logged connections to anyone else. This isn't a failure of the database. It reflects the actual state of the ecosystem: a large share of farms, regional investors, and emerging technology companies operate without public formal ties to the coalitions and networks that structure the space at scale.
 <figure style="margin: 32px 0;">
-  <img src="/assets/landscape-connectivity-donut.svg" alt="78% of mapped organizations have no logged network connections" style="max-width: 500px; width: 100%;">
+  <img src="/assets/connectivity-donut.svg" alt="78% of mapped organizations have no logged network connections" style="max-width: 500px; width: 100%;">
   <figcaption style="font-size: 13px; color: #888; margin-top: 8px;">Of 3,293 organizations in the landscape database, only 737 have logged connections to the coalition network.</figcaption>
 </figure>
 
