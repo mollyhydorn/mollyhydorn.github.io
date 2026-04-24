@@ -3,15 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Regenerative Agriculture — Hub &amp; Spoke Network</title>
+<title>Regenerative Agriculture — Regenerative Agriculture Ecosystem (Illustrative)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --green-mid: #3B6D11; --ink: #1c2420; --muted: #5a6b62;
-    --border: rgba(59,109,17,0.15); --panel-bg: rgba(255,255,255,0.97); --bg: #f4f5f0;
-  }
+  :root { --green-mid: #3B6D11; --ink: #1c2420; --muted: #5a6b62; --border: rgba(59,109,17,0.15); --panel-bg: rgba(255,255,255,0.97); --bg: #f4f5f0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
   header { padding: 16px 24px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 16px; background: var(--bg); flex-shrink: 0; }
   header h1 { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--ink); letter-spacing: -0.02em; }
@@ -40,122 +37,101 @@
 </style>
 </head>
 <body>
-
-<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Anonymized interactive hub-and-spoke network map of the regenerative agriculture ecosystem, showing illustrative coalition hubs and member organizations by sector and role.</h2>
-
 <header>
-  <h1>Hub &amp; Spoke Network</h1>
-  <p>Regenerative Agriculture Ecosystem · Coalition Hubs &amp; Member Organizations</p>
-  <div class="stats">
-    <div class="stat"><span class="stat-v">13</span><span class="stat-l">coalition hubs</span></div>
-    <div class="stat"><span class="stat-v">26</span><span class="stat-l">member organizations</span></div>
-  </div>
+  <h1>Regenerative Agriculture Ecosystem (Illustrative)</h1>
+  <p>Coalition Hubs · Cross-Coalition Connectors · Emerging Actors</p>
+  <div class="stats"><div class="stat"><span class="stat-v">609</span><span class="stat-l">connected nodes</span></div><div class="stat"><span class="stat-v">806</span><span class="stat-l">total edges</span></div><div class="stat"><span class="stat-v">13</span><span class="stat-l">coalition hubs</span></div></div>
 </header>
-
 <div id="canvas">
   <svg id="svg"></svg>
   <div id="panel">
-    <div id="p-tag"></div>
-    <div id="p-name"></div>
-    <div id="p-desc"></div>
-    <div id="p-stats"></div>
+    <div id="p-tag"></div><div id="p-name"></div><div id="p-desc"></div><div id="p-stats"></div>
   </div>
   <div id="legend">
     <div class="leg"><div class="leg-dot" style="background:#3B6D11"></div>Certification / standards</div>
     <div class="leg"><div class="leg-dot" style="background:#185FA5"></div>Trade / advocacy</div>
-    <div class="leg"><div class="leg-dot" style="background:#854F0B"></div>Sourcing / land verification</div>
+    <div class="leg"><div class="leg-dot" style="background:#854F0B"></div>Sourcing / land</div>
     <div class="leg"><div class="leg-dot" style="background:#6a1b9a"></div>Corporate / COP pledges</div>
     <div class="leg"><div class="leg-dot" style="background:#0F6E56"></div>Finance / funders</div>
     <div class="leg"><div class="leg-dot" style="background:#993C1D"></div>Outdoor / fiber</div>
     <div class="leg"><div class="leg-dot" style="background:#993556"></div>Consumer brands</div>
-    <div class="leg"><div class="leg-dot" style="background:#888780; width:8px; height:8px"></div>Member organization</div>
+    <div class="leg"><div class="leg-dot" style="background:#1D9E75"></div>GHG measurement</div>
+    <div class="leg"><div class="leg-dot" style="background:#888780;width:8px;height:8px"></div>Member organization</div>
   </div>
   <div id="hint">click any node to explore · scroll to zoom · drag to pan</div>
 </div>
-
 <script>
 const HUBS = [
-  {id:'roa',  label:'Cert. Coalition A',        full:'Regenerative Certification Coalition A',        color:'#3B6D11', r:34, bc:0.535, members:156, desc:'The largest certification body in the ecosystem by member count. Sets soil health, animal welfare, and farmer fairness standards. 150+ licensed brands across food, fiber, and personal care.', cat:'cert'},
-  {id:'ota',  label:'Trade Assoc. A',           full:'Organic Trade Association A',                   color:'#185FA5', r:28, bc:0.371, members:96,  desc:'The primary organic industry trade association. Sustainability council spans the full supply chain from farms through retail. Key vehicle for policy advocacy.', cat:'trade'},
-  {id:'aarl', label:'COP Pledge Coalition',     full:'COP28 Landscape Pledge Coalition',              color:'#6a1b9a', r:20, bc:0.278, members:22,  desc:'Multi-stakeholder coalition launched at COP28. $9B+ pledged across 210M hectares. Structurally significant: the only coalition bridging commodity traders and CPG companies to NGO and finance clusters.', cat:'corp'},
-  {id:'l2m',  label:'Sourcing Standard A',      full:'Regenerative Sourcing Standard A',              color:'#854F0B', r:25, bc:0.205, members:61,  desc:'Outcome-based land health verification program. Connects brands sourcing regeneratively-raised meat, fiber, and dairy to verified producers. Anchors the fiber and land cluster.', cat:'land'},
-  {id:'fora', label:'Funder Network A',         full:'Funders for Regenerative Agriculture A',        color:'#0F6E56', r:24, bc:0.185, members:57,  desc:'60+ philanthropic and impact finance organizations coordinating capital deployment. Connects foundations, family offices, impact funds, and development finance into the regenerative agriculture field.', cat:'finance'},
-  {id:'cfa',  label:'GHG Tool Coalition',       full:'Agricultural GHG Measurement Coalition',        color:'#1D9E75', r:20, bc:0.140, members:28,  desc:'Pre-competitive coalition around a shared on-farm GHG measurement tool. Members include large food and beverage companies using the tool to measure Scope 3 emissions in supply chains.', cat:'corp'},
-  {id:'tca',  label:'Outdoor Coalition A',      full:'Outdoor Industry Conservation Coalition A',     color:'#993C1D', r:20, bc:0.088, members:28,  desc:'270+ outdoor businesses pooling resources for conservation grants and public lands advocacy. Founded by four major outdoor brands. Structural bridge to the fiber and outdoor cluster.', cat:'outdoor'},
-  {id:'rgb',  label:'Brand Coalition A',        full:'Regenerative Consumer Brand Coalition A',       color:'#993556', r:19, bc:0.072, members:29,  desc:'Trade association for consumer food and beverage brands committed to regenerative sourcing. Launched 2024. Members span snacks, dairy, protein, and supplements.', cat:'brand'},
-  {id:'ra',   label:'Policy Coalition A',       full:'Regenerative Agriculture Policy Coalition A',   color:'#854F0B', r:18, bc:0.050, members:15,  desc:'Farm Bill advocacy coalition stewarded by a leading regenerative ag nonprofit. 80+ businesses and nonprofits aligned on shifting federal agricultural policy toward regenerative practices.', cat:'land'},
-  {id:'dmaa', label:'Dairy Coalition A',        full:'Dairy Methane Action Coalition A',              color:'#0F6E56', r:17, bc:0.032, members:11,  desc:'Coalition of global dairy companies committing to measure, disclose, and reduce methane emissions from dairy supply chains. Convened by a major environmental NGO.', cat:'finance'},
-  {id:'sfl',  label:'Learning Consortium A',    full:'Sustainable Food Systems Consortium A',         color:'#185FA5', r:17, bc:0.050, members:10,  desc:'Pre-competitive learning and facilitation consortium. Runs soil health training programs for agronomists, an organic grain collaboration, and a cool soil measurement initiative.', cat:'trade'},
-  {id:'te',   label:'Fiber Standards Body A',   full:'Regenerative Fiber Standards Body A',           color:'#993C1D', r:16, bc:0.016, members:9,   desc:'Nonprofit setting standards for responsible fiber and materials sourcing. 400+ companies participate in annual materials benchmark. Founding partner of Certification Coalition A.', cat:'outdoor'},
-  {id:'sai',  label:'Global Regen Framework A', full:'Global Regenerative Agriculture Framework A',   color:'#6a1b9a', r:15, bc:0.014, members:5,   desc:'Framework adopted by major food companies to define and measure regenerative agriculture. Published a sector-wide definition in 2023 used by companies spanning multiple continents.', cat:'corp'},
+  {id:'roa',label:'Cert. Coalition A',full:'Certification Coalition A',color:'#3B6D11',r:34,bc:0.513,members:156,desc:'The largest certification body in the ecosystem. Sets soil health, animal welfare, and farmer fairness standards. 150+ licensed brands across food, fiber, and personal care.'},
+  {id:'ota',label:'Trade Assoc. A',full:'Trade Association A',color:'#185FA5',r:28,bc:0.358,members:96,desc:'Primary organic industry trade association. Sustainability council spans the full supply chain. Key policy advocacy vehicle.'},
+  {id:'aarl',label:'COP Pledge Coalition',full:'COP Landscape Pledge Coalition',color:'#6a1b9a',r:20,bc:0.272,members:22,desc:'Multi-stakeholder coalition launched at COP28. $9B+ pledged across 210M hectares. Bridges commodity traders, CPG, and NGOs — highest betweenness per member.'},
+  {id:'l2m',label:'Sourcing Standard A',full:'Regenerative Sourcing Standard A',color:'#854F0B',r:25,bc:0.197,members:61,desc:'Outcome-based land health verification. Connects brands to verified regenerative producers. Anchors the fiber and land cluster.'},
+  {id:'fora',label:'Funder Network A',full:'Funder Network A',color:'#0F6E56',r:24,bc:0.188,members:60,desc:'60 philanthropic and impact finance organizations coordinating capital into regenerative agriculture.'},
+  {id:'cfa',label:'GHG Tool Coalition',full:'GHG Measurement Coalition',color:'#1D9E75',r:20,bc:0.132,members:28,desc:'Pre-competitive coalition around a shared on-farm GHG measurement tool. Members span food, beverage, and ag sectors.'},
+  {id:'tca',label:'Outdoor Coalition A',full:'Outdoor Industry Conservation Coalition A',color:'#993C1D',r:20,bc:0.084,members:28,desc:'270+ outdoor businesses pooling resources for conservation grants and public lands advocacy.'},
+  {id:'rgb',label:'Brand Coalition A',full:'Consumer Brand Coalition A',color:'#993556',r:19,bc:0.068,members:29,desc:'Trade association for consumer food and beverage brands committed to regenerative sourcing. 31 inaugural members launched 2024.'},
+  {id:'ra',label:'Policy Coalition A',full:'Regenerative Policy Coalition A',color:'#854F0B',r:18,bc:0.048,members:15,desc:'Farm Bill advocacy coalition stewarded by a leading regenerative ag nonprofit. 80+ businesses and nonprofits.'},
+  {id:'dmaa',label:'Dairy Coalition A',full:'Dairy Emissions Coalition A',color:'#0F6E56',r:17,bc:0.032,members:11,desc:'NGO-convened. 11 dairy companies committing to measure, disclose, and reduce supply chain methane emissions.'},
+  {id:'sfl',label:'Learning Consortium A',full:'Food Systems Consortium A',color:'#185FA5',r:17,bc:0.073,members:11,desc:'Pre-competitive learning consortium. Runs soil health training, organic grain collaboration, and GHG measurement initiatives.'},
+  {id:'te',label:'Fiber Standards A',full:'Fiber Standards Body A',color:'#993C1D',r:16,bc:0.016,members:9,desc:'Nonprofit setting standards for responsible fiber and materials sourcing. 400+ companies in annual materials benchmark.'},
+  {id:'sai',label:'Global Regen Framework A',full:'Global Regenerative Framework A',color:'#6a1b9a',r:17,bc:0.014,members:9,desc:'Framework adopted by major food companies to define and measure regenerative agriculture. Published sector-wide definition 2023. Piloted across 25 countries.'},
 ];
-
 const SPOKES = [
-  {id:'gm',    hub:'ota',  hub2:'aarl', hub3:'dmaa', hub4:'l2m', hub5:'sfl', label:'Global CPG Co. A',        color:'#B4B2A9', r:9,  desc:'Spans 5 coalitions: Trade Assoc. A · COP Pledge · Dairy Coalition · Sourcing Standard · Learning Consortium. Broadest formal coalition reach of any individual company in the network.'},
-  {id:'dan',   hub:'ota',  hub2:'aarl', hub3:'dmaa', hub4:'cfa', hub5:'sai', label:'Global Dairy Co. A',       color:'#B4B2A9', r:9,  desc:'5 coalitions: Trade Assoc. · COP Pledge · Dairy Coalition · GHG Tool · Global Framework. Largest dairy footprint in the network across certification and emissions coalitions.'},
-  {id:'uni',   hub:'sfl',  hub2:'aarl', hub3:'ra',   hub4:'sai', hub5:'cfa', label:'Global FMCG Co. A',        color:'#B4B2A9', r:9,  desc:'5 coalitions: Learning Consortium · COP Pledge · Policy Coalition · Global Framework · GHG Tool. Cross-sector leader spanning food systems, policy, and corporate pledges.'},
-  {id:'pep',   hub:'sfl',  hub2:'aarl', hub3:'sai',  hub4:'cfa',             label:'Global Beverage Co. A',   color:'#B4B2A9', r:10, desc:'4 coalitions. Highest betweenness centrality (0.260) of any individual company — structural chokepoint between commodity trading, corporate sustainability, and funder clusters.'},
-  {id:'pat',   hub:'roa',  hub2:'tca',  hub3:'te',                           label:'Outdoor Brand A',          color:'#B4B2A9', r:8,  desc:'3 coalitions: Cert. Coalition · Outdoor Coalition · Fiber Standards. The sole bridge between the outdoor industry cluster and the fiber/land cluster. Founding member of both.'},
-  {id:'car',   hub:'aarl', hub2:'cfa',  hub3:'ota',                          label:'Agri-Commodity Co. A',    color:'#B4B2A9', r:8,  desc:'3 coalitions: COP Pledge · GHG Tool · Trade Assoc. Major commodity trader spanning corporate pledges, GHG measurement, and organic trade coalitions.'},
-  {id:'app',   hub:'l2m',  hub2:'ota',  hub3:'ra',                           label:'Meat Brand A',             color:'#B4B2A9', r:7,  desc:'3 coalitions: Sourcing Standard · Trade Assoc. · Policy Coalition. Regenerative meat brand bridging land verification, organic trade, and Farm Bill advocacy.'},
-  {id:'alec',  hub:'l2m',  hub2:'roa',  hub3:'rgb',                          label:'Ice Cream Brand A',        color:'#B4B2A9', r:7,  desc:'3 coalitions: Sourcing Standard · Cert. Coalition · Brand Coalition. Notable as a small independent brand spanning three major coalitions independently — rare for its size.'},
-  {id:'nes',   hub:'aarl', hub2:'dmaa', hub3:'sai',                          label:'Global Food Co. A',        color:'#B4B2A9', r:8,  desc:'3 coalitions: COP Pledge · Dairy Coalition · Global Framework. Founding member of the COP landscape pledge and dairy methane coalition.'},
-  {id:'mac',   hub:'aarl', hub2:'cfa',  hub3:'sai',                          label:'Frozen Food Co. A',        color:'#B4B2A9', r:7,  desc:'3 coalitions: COP Pledge · GHG Tool · Global Framework. Led development of the global regenerative agriculture framework as steering committee chair.'},
-  {id:'ksm',   hub:'roa',  hub2:'te',                                        label:'Regen NGO A',              color:'#B4B2A9', r:7,  desc:'Stewards Policy Coalition A. Partner of Cert. Coalition and Fiber Standards. Key advocacy node connecting the certification and policy clusters.'},
-  {id:'bron',  hub:'roa',  hub2:'ra',                                        label:'Personal Care Brand A',    color:'#B4B2A9', r:7,  desc:'Founding member of Cert. Coalition · Policy Coalition member. Bridges certification ecosystem and Farm Bill advocacy. One of few brands active in both.'},
-  {id:'ef',    hub:'l2m',  hub2:'te',                                        label:'Apparel Brand A',          color:'#B4B2A9', r:6,  desc:'Sourcing Standard + Fiber Standards. One of only two bridges between the fiber/land cluster and apparel. A structural gap in the network that limits cross-sector coordination.'},
-  {id:'ker',   hub:'l2m',  hub2:'te',                                        label:'Luxury Fashion Co. A',     color:'#B4B2A9', r:6,  desc:'Sourcing Standard + Fiber Standards. Luxury goods group bridging regen land verification to fiber sourcing standards. Paired with Apparel Brand A as a rare cross-cluster link.'},
-  {id:'lund',  hub:'roa',  hub2:'ota',                                       label:'Grain Brand A',            color:'#B4B2A9', r:6,  desc:'Cert. Coalition + Trade Assoc. Established organic and regen grain producer. Longstanding member of both certification and organic trade coalitions.'},
-  {id:'prana', hub:'roa',  hub2:'tca',                                       label:'Outdoor Apparel Brand A',  color:'#B4B2A9', r:6,  desc:'Cert. Coalition + Outdoor Coalition. Bridges the regen certification ecosystem and the outdoor industry conservation cluster.'},
-  {id:'olam',  hub:'aarl', hub2:'roa',                                       label:'Global Ingredient Co. A',  color:'#B4B2A9', r:6,  desc:'COP Pledge + Cert. Coalition. Global agri-commodity trader bridging the COP28 landscape pledge network to the regen certification brand ecosystem.'},
-  {id:'bunge', hub:'aarl', hub2:'cfa',                                       label:'Agri-Commodity Co. B',    color:'#B4B2A9', r:6,  desc:'COP Pledge + GHG Tool. Grain commodity trader present in both the COP28 landscape agenda and the on-farm GHG measurement coalition.'},
-  {id:'wfm',   hub:'ota',  hub2:'sfl',                                       label:'Natural Retailer A',       color:'#B4B2A9', r:6,  desc:'Trade Assoc. + Learning Consortium. Major natural and organic grocery retailer anchoring the organic grain collaboration within the SFL consortium.'},
-  {id:'ov',    hub:'ota',  hub2:'sfl',                                       label:'Farmer Cooperative A',     color:'#B4B2A9', r:6,  desc:'Trade Assoc. + Learning Consortium. Farmer-owned cooperative bridging organic trade and the Sustainable Food Systems Consortium.'},
-  {id:'trad',  hub:'ota',  hub2:'cfa',                                       label:'Herbal Brand A',           color:'#B4B2A9', r:6,  desc:'Trade Assoc. + GHG Tool. Organic herbal brand crossing the organic trade association and the GHG measurement coalition.'},
-  {id:'adm',   hub:'aarl',                                                   label:'Agri-Commodity Co. C',    color:'#B4B2A9', r:7,  desc:'COP Pledge participant. Major global commodity trader with large-scale regenerative agriculture enrollment program across millions of acres.'},
-  {id:'rock',  hub:'fora',                                                   label:'Major Foundation A',       color:'#B4B2A9', r:7,  desc:'Funder Network member and bilateral formal partner. Major philanthropic catalyst in regenerative agriculture finance.'},
-  {id:'msft',  hub:'fora',                                                   label:'Technology Co. A',         color:'#B4B2A9', r:7,  desc:'Funder Network member. Significant co-investment in soil carbon markets via multi-year agreements with regenerative agriculture technology companies.'},
-  {id:'straus',hub:'ota',                                                    label:'Regional Dairy Brand A',   color:'#B4B2A9', r:6,  desc:'Trade Assoc. Sustainability Council member. Pioneer organic dairy, first certified organic creamery in its region.'},
-  {id:'clif',  hub:'ota',  hub2:'sfl',                                       label:'Nutrition Brand A',        color:'#B4B2A9', r:6,  desc:'Trade Assoc. + Learning Consortium. Cornerstone funder of the organic agronomy training program. Regen grain sourcing pioneer.'},
+  {id:'gm',hubs:['ota','aarl','dmaa','l2m','sfl'],label:'Global CPG Co. A',r:9,desc:'5 coalitions. Broadest coalition reach of any individual company. Formal partnership with farmland NGO (600K acres regen by 2030). Anchor for mass retailer regen program.'},
+  {id:'dan',hubs:['ota','aarl','dmaa','cfa','sai'],label:'Global Dairy Co. A',r:8,desc:'5 coalitions. Largest dairy footprint in the network across certification, emissions, and measurement coalitions.'},
+  {id:'uni',hubs:['sfl','aarl','ra','sai','cfa'],label:'Global FMCG Co. A',r:8,desc:'5 coalitions. Cross-sector leader spanning food systems, policy, and corporate pledges. Co-leads farmer advisory initiative.'},
+  {id:'pep',hubs:['sfl','aarl','sai','cfa'],label:'Global Beverage Co. A',r:10,desc:'4 coalitions. Highest betweenness (0.252) of any individual company. 19 total edges. Co-leads farmer advisory initiative. Climate-smart crop warranty program.'},
+  {id:'pat',hubs:['roa','tca','te'],label:'Outdoor Brand A',r:8,desc:'3 coalitions: Cert., Outdoor, Fiber Standards. County-scale regen transition investment via philanthropic arm. Sole bridge between outdoor and fiber/land clusters.'},
+  {id:'car',hubs:['aarl','cfa','ota'],label:'Agri-Commodity Co. A',r:8,desc:'3 coalitions: COP Pledge, GHG Tool, Trade Assoc. Major commodity trader spanning corporate pledges and organic trade.'},
+  {id:'app',hubs:['l2m','ota','ra'],label:'Meat Brand A',r:7,desc:'3 coalitions: Sourcing Standard, Trade Assoc., Policy Coalition. Regen meat brand bridging land verification, organic trade, and Farm Bill advocacy.'},
+  {id:'alec',hubs:['l2m','roa','rgb'],label:'Ice Cream Brand A',r:7,desc:'3 coalitions: Sourcing Standard, Cert. Coalition, Brand Coalition. Standout SMB — rare small brand spanning three independent coalitions. BC=0.073.'},
+  {id:'nes',hubs:['aarl','dmaa','sai'],label:'Global Food Co. A',r:8,desc:'3 coalitions: COP Pledge, Dairy Coalition, Global Framework. Formal partnerships with outcomes-based regen finance org (13,000 ha) and NGO implementing partners across 5 European countries.'},
+  {id:'mac',hubs:['aarl','cfa','sai'],label:'Frozen Food Co. A',r:7,desc:'3 coalitions: COP Pledge, GHG Tool, Global Framework. Led development of global regen ag framework as steering committee chair.'},
+  {id:'olam',hubs:['aarl','roa'],label:'Global Ingredient Co. A',r:7,desc:'COP Pledge and Cert. Coalition. 5-year cocoa supply chain partnership (960+ farmers, 9,000+ ha). BC=0.179.'},
+  {id:'prana',hubs:['roa','tca'],label:'Outdoor Apparel A',r:6,desc:'Cert. Coalition and Outdoor Coalition. Bridges regen certification and outdoor conservation. BC=0.085.'},
+  {id:'bron',hubs:['roa','ra'],label:'Personal Care Brand A',r:6,desc:'Cert. Coalition founding member and Policy Coalition member. Bridges certification ecosystem and Farm Bill advocacy.'},
+  {id:'ef',hubs:['l2m','te'],label:'Apparel Brand A',r:6,desc:'Sourcing Standard and Fiber Standards. One of only two bridges between fiber/land and apparel sustainability clusters.'},
+  {id:'ker',hubs:['l2m','te'],label:'Luxury Fashion Co. A',r:6,desc:'Sourcing Standard and Fiber Standards. Luxury group bridging regen land verification to fiber sourcing standards.'},
+  {id:'tnc',hubs:['aarl','fora','l2m'],label:'Conservation NGO A',r:9,desc:'14 total edges. Highest-degree NGO. Co-authored farm advisor roadmap (major foundation-funded). Formal partnerships with commodity trader and government agency.'},
+  {id:'nfwf',hubs:['fora','l2m'],label:'Conservation Fund A',r:8,desc:'10 edges. $200M+ 7-year grassland resilience initiative (4M acres, 26 states). Primary funder: Restaurant Chain A. Grantees: bird NGO, farmland NGO, wildlife foundation, university research center.'},
+  {id:'mcdon',hubs:['fora','l2m'],label:'Restaurant Chain A',r:8,desc:'Primary funder of Conservation Fund A Grassland Resilience Initiative ($200M+, 7-year). Largest documented single-company conservation investment in the network.'},
+  {id:'mars',hubs:['aarl','cfa'],label:'Global Confectionery A',r:8,desc:'6 total edges. Cocoa supply chain partnership (960+ farmers, 9,000+ ha). Peanut initiative with Ag Finance Platform A. Governance edge to Pet Food Brand A.'},
+  {id:'soilcap',hubs:['fora','sai'],label:'Ag Finance Platform A',r:9,desc:'9 total edges. Emerging hub. Formal partnerships with Global Beverage Co. A (EU), Global Food Co. A (13,000 ha), Pet Food Brand A (46,000 ha), Global Confectionery A, Global Framework A, and Commercial Bank A.'},
+  {id:'adm',hubs:['aarl','fora'],label:'Agri-Commodity Co. B',r:8,desc:'7 total edges. 4M acres regen enrollment. Supply chain GHG program with AgTech Platform A in Germany (25,000 ha, 33% below national benchmark).'},
+  {id:'rodale',hubs:['fora','roa'],label:'Research NGO A',r:7,desc:'6 total edges. Cert. Coalition founding member. Operates county-scale regen transition program ($2.55M philanthropic-funded, 57 farms, 10,000 acres).'},
+  {id:'rock',hubs:['fora'],label:'Major Foundation A',r:7,desc:'6 total edges. Funder Network member. Co-investments in transition finance coalition, regen lending fund, impact platform, and research institution.'},
+  {id:'msft',hubs:['fora'],label:'Technology Co. A',r:7,desc:'4 total edges. Funder Network member. Co-investments in soil carbon market (2.85M tonne deal), carbon credit program, and farmland fund ($250M).'},
+  {id:'wfm',hubs:['ota','sfl'],label:'Natural Retailer A',r:7,desc:'5 total edges. Trade Assoc. and Learning Consortium. Formal partnerships with regen beef brand, regen ag platform, and soil climate initiative.'},
+  {id:'lvmh',hubs:['te','l2m'],label:'Luxury Group A',r:8,desc:'Fiber Standards and Sourcing Standard. Group-wide sustainability framework. Regenerative leather project (6 pillars). Regenerative wool and cotton supply chain programs.'},
+  {id:'mcc',hubs:['sfl','cfa'],label:'Spice Co. A',r:7,desc:'Three-way regen ag partnership with Global Beverage Co. A and outcomes finance org: 100+ farmers, 80,000+ acres, 50,000+ metric tons GHG abated in year one.'},
+  {id:'klim',hubs:['aarl','fora'],label:'AgTech Platform A',r:6,desc:'Digital agronomy platform. Supply chain GHG program partner in Germany (25,000 ha). Field-level data, GHG measurement, soil sampling.'},
+  {id:'kground',hubs:['ra','roa'],label:'Advocacy NGO A',r:7,desc:'Stewards Policy Coalition A. Cert. Coalition ally. Formal partnerships with Meat Brand A and fashion retailer.'},
+  {id:'afd',hubs:['fora','l2m'],label:'Farmland NGO A',r:7,desc:'Farmland protection NGO. Formal partnership with Global CPG Co. A (600K regen acres by 2030 with mass retailer and conservation fund). Conservation Fund A grantee.'},
 ];
 
-// ── helpers ─────────────────────────────────────────────────────────────────
-
-// Wrap text inside a hub circle. Picks the largest font size (from `sizes`)
-// at which the label fits within the circle's chord, then splits into tspans.
+// ── helpers ───────────────────────────────────────────────────────────────────
 function wrapHub(textEl, label, radius) {
   const sizes = [9, 8, 7, 6.5, 6];
-  // usable chord width inside circle (using inscribed square approximation)
   const maxW = radius * 1.55;
-  const lineH = 1.25; // em
-
+  const lineH = 1.25;
   for (const sz of sizes) {
-    const charW = sz * 0.52; // approximate average char width
+    const charW = sz * 0.52;
     const charsPerLine = Math.max(1, Math.floor(maxW / charW));
     const words = label.split(' ');
     const lines = [];
     let line = [];
     for (const w of words) {
       const candidate = [...line, w].join(' ');
-      if (candidate.length > charsPerLine && line.length > 0) {
-        lines.push(line.join(' '));
-        line = [w];
-      } else {
-        line.push(w);
-      }
+      if (candidate.length > charsPerLine && line.length > 0) { lines.push(line.join(' ')); line = [w]; }
+      else { line.push(w); }
     }
     if (line.length) lines.push(line.join(' '));
-
-    // check longest line still fits
     const longestChars = Math.max(...lines.map(l => l.length));
     if (longestChars * charW <= maxW || sz === sizes[sizes.length - 1]) {
-      // render
       const totalH = (lines.length - 1) * sz * lineH;
       lines.forEach((ln, i) => {
-        textEl.append('tspan')
-          .attr('x', 0)
-          .attr('dy', i === 0 ? -totalH / 2 + 'px' : (sz * lineH) + 'px')
-          .text(ln);
+        textEl.append('tspan').attr('x', 0)
+          .attr('dy', i === 0 ? -totalH / 2 + 'px' : (sz * lineH) + 'px').text(ln);
       });
       textEl.attr('font-size', sz + 'px');
       return;
@@ -163,7 +139,6 @@ function wrapHub(textEl, label, radius) {
   }
 }
 
-// Wrap text below a spoke circle. Always uses 9px, wraps to ~72px wide.
 function wrapSpoke(textEl, label, radius) {
   const sz = 9;
   const charW = sz * 0.52;
@@ -175,34 +150,23 @@ function wrapSpoke(textEl, label, radius) {
   let line = [];
   for (const w of words) {
     const candidate = [...line, w].join(' ');
-    if (candidate.length > charsPerLine && line.length > 0) {
-      lines.push(line.join(' '));
-      line = [w];
-    } else {
-      line.push(w);
-    }
+    if (candidate.length > charsPerLine && line.length > 0) { lines.push(line.join(' ')); line = [w]; }
+    else { line.push(w); }
   }
   if (line.length) lines.push(line.join(' '));
-
   lines.forEach((ln, i) => {
-    textEl.append('tspan')
-      .attr('x', 0)
-      .attr('dy', i === 0 ? (radius + 11) + 'px' : lineH + 'px')
-      .text(ln);
+    textEl.append('tspan').attr('x', 0)
+      .attr('dy', i === 0 ? (radius + 11) + 'px' : lineH + 'px').text(ln);
   });
   textEl.attr('font-size', sz + 'px');
 }
 
-// ── layout ───────────────────────────────────────────────────────────────────
-
+// ── layout ────────────────────────────────────────────────────────────────────
 const W = () => document.getElementById('canvas').clientWidth;
 const H = () => document.getElementById('canvas').clientHeight;
-
 const svg = d3.select('#svg');
 const g   = svg.append('g');
-
-const zoom = d3.zoom().scaleExtent([0.3, 3])
-  .on('zoom', e => g.attr('transform', e.transform));
+const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', e => g.attr('transform', e.transform));
 svg.call(zoom);
 
 function layout() {
@@ -210,19 +174,17 @@ function layout() {
   const n = HUBS.length;
   HUBS.forEach((hub, i) => {
     const ang  = (i / n) * 2 * Math.PI - Math.PI / 2;
-    const dist = 200 + (hub.bc > 0.2 ? -30 : hub.bc > 0.08 ? 0 : 20);
+    const dist = 195 + (hub.bc > 0.2 ? -30 : hub.bc > 0.08 ? 5 : 22);
     hub.x = cx + Math.cos(ang) * dist;
     hub.y = cy + Math.sin(ang) * dist;
   });
-
   const hubMap = {};
   HUBS.forEach(h => { hubMap[h.id] = h; });
-
   SPOKES.forEach(s => {
-    s._hubs = [s.hub, s.hub2, s.hub3, s.hub4, s.hub5].filter(Boolean);
-    const primaryHub = hubMap[s.hub];
+    s._hubs = s.hubs;
+    const primaryHub = hubMap[s.hubs[0]];
     const ang    = Math.atan2(primaryHub.y - cy, primaryHub.x - cx);
-    const r      = 290 + (Math.random() - 0.5) * 50;
+    const r      = 295 + (Math.random() - 0.5) * 50;
     const jitter = (Math.random() - 0.5) * 60;
     s.x = cx + Math.cos(ang + (Math.random() - 0.5) * 0.5) * r + jitter;
     s.y = cy + Math.sin(ang + (Math.random() - 0.5) * 0.5) * r + jitter;
@@ -230,7 +192,7 @@ function layout() {
   return hubMap;
 }
 
-const hubMap  = layout();
+const hubMap   = layout();
 const allNodes = [...HUBS, ...SPOKES];
 
 const links = [];
@@ -241,44 +203,25 @@ HUBS.forEach(h => {
   });
 });
 
-// ── spoke separation simulation ───────────────────────────────────────────────
-// Run a short force sim on all nodes to push overlapping spokes apart.
-// Hubs are pinned so they don't move. Collision radius includes estimated
-// label height below each spoke so labels don't stack on top of each other.
-
+// ── pre-simulation: push spokes apart (hubs pinned) ──────────────────────────
 const cx0 = W() / 2, cy0 = H() / 2;
-
-// Clone nodes for the sim so we don't mutate originals until settled
 const simNodes = allNodes.map(d => Object.assign({}, d));
 simNodes.forEach(sn => {
   const orig = allNodes.find(n => n.id === sn.id);
-  if (orig.bc !== undefined) { sn.fx = orig.x; sn.fy = orig.y; } // pin hubs
+  if (orig.bc !== undefined) { sn.fx = orig.x; sn.fy = orig.y; }
 });
-
 const spokeLinks = links.map(l => ({
   source: simNodes.find(n => n.id === l.s),
   target: simNodes.find(n => n.id === l.t),
   primary: l.primary
 }));
-
-// Collision radius: hub r + small gap; spoke r + label height estimate (2 lines)
-const collideR = d => d.bc !== undefined ? d.r + 4 : d.r + 30;
-
+const collideR = d => d.bc !== undefined ? d.r + 4 : d.r + 32;
 const presim = d3.forceSimulation(simNodes)
-  .force('collide', d3.forceCollide().radius(collideR).strength(0.9).iterations(5))
-  .force('link', d3.forceLink(spokeLinks)
-    .strength(d => d.primary ? 0.12 : 0.04)
-    .distance(() => 300))
-  // gentle pull to keep spokes on the outer ring, not drifting inward
-  .force('r', d3.forceRadial(
-    d => d.bc !== undefined ? 0 : 300,
-    cx0, cy0
-  ).strength(d => d.bc !== undefined ? 0 : 0.1))
+  .force('collide', d3.forceCollide().radius(collideR).strength(0.9).iterations(6))
+  .force('link', d3.forceLink(spokeLinks).strength(d => d.primary ? 0.12 : 0.04).distance(() => 305))
+  .force('r', d3.forceRadial(d => d.bc !== undefined ? 0 : 305, cx0, cy0).strength(d => d.bc !== undefined ? 0 : 0.1))
   .stop();
-
-for (let i = 0; i < 300; i++) presim.tick();
-
-// Write settled positions back to real node objects (spokes only)
+for (let i = 0; i < 350; i++) presim.tick();
 simNodes.forEach(sn => {
   if (sn.bc === undefined) {
     const real = allNodes.find(n => n.id === sn.id);
@@ -286,8 +229,7 @@ simNodes.forEach(sn => {
   }
 });
 
-// ── render ───────────────────────────────────────────────────────────────────
-
+// ── render ────────────────────────────────────────────────────────────────────
 const linkSel = g.append('g').selectAll('line').data(links).join('line')
   .attr('stroke',         d => hubMap[d.t]?.color || '#888780')
   .attr('stroke-width',   d => d.primary ? 1.5 : 1)
@@ -305,38 +247,28 @@ nodeSel.append('circle')
   .attr('r',            d => d.r)
   .attr('fill',         d => d.color)
   .attr('fill-opacity', d => d.bc !== undefined ? 0.9 : 0.7)
-  .attr('stroke',         d => d.color)
-  .attr('stroke-width',   d => d.bc !== undefined ? 2.5 : 1.5)
+  .attr('stroke',       d => d.color)
+  .attr('stroke-width', d => d.bc !== undefined ? 2.5 : 1.5)
   .attr('stroke-opacity', d => d.bc !== undefined ? 1 : 0.6);
 
-// Hub labels — wrapped & size-fitted inside circle
 nodeSel.filter(d => d.bc !== undefined).append('text')
-  .attr('text-anchor',  'middle')
-  .attr('font-family',  'DM Sans, sans-serif')
-  .attr('font-weight',  '500')
-  .attr('fill',         '#fff')
-  .attr('pointer-events', 'none')
+  .attr('text-anchor', 'middle').attr('font-family', 'DM Sans, sans-serif')
+  .attr('font-weight', '500').attr('fill', '#fff').attr('pointer-events', 'none')
   .each(function(d) { wrapHub(d3.select(this), d.label, d.r); });
 
-// Spoke labels — wrapped below circle
 nodeSel.filter(d => d.bc === undefined).append('text')
-  .attr('text-anchor',  'middle')
-  .attr('font-family',  'DM Sans, sans-serif')
-  .attr('font-weight',  '300')
-  .attr('fill',         '#5a6b62')
-  .attr('pointer-events', 'none')
+  .attr('text-anchor', 'middle').attr('font-family', 'DM Sans, sans-serif')
+  .attr('font-weight', '300').attr('fill', '#5a6b62').attr('pointer-events', 'none')
   .each(function(d) { wrapSpoke(d3.select(this), d.label, d.r); });
 
-// ── interaction ──────────────────────────────────────────────────────────────
-
+// ── interaction ───────────────────────────────────────────────────────────────
 let selected = null;
 const panel = document.getElementById('panel');
 
 function resetAll() {
   nodeSel.classed('node-dim', false);
-  linkSel.classed('link-dim',   false)
-         .classed('link-active', false)
-         .attr('stroke-opacity', d => d.primary ? 0.25 : 0.15);
+  linkSel.classed('link-dim', false).classed('link-active', false)
+    .attr('stroke-opacity', d => d.primary ? 0.25 : 0.15);
   panel.classList.remove('vis');
   selected = null;
 }
@@ -345,48 +277,35 @@ nodeSel.on('click', function(event, d) {
   event.stopPropagation();
   if (selected === d.id) { resetAll(); return; }
   selected = d.id;
-
   const isHub = d.bc !== undefined;
-  const connectedIds = new Set([d.id]);
-
+  const conn = new Set([d.id]);
   if (isHub) {
-    SPOKES.forEach(s => { if (s._hubs.includes(d.id)) connectedIds.add(s.id); });
-    HUBS.forEach(h => {
-      SPOKES.forEach(s => {
-        if (s._hubs.includes(d.id) && s._hubs.includes(h.id)) connectedIds.add(h.id);
-      });
-    });
+    SPOKES.forEach(s => { if (s._hubs.includes(d.id)) conn.add(s.id); });
+    HUBS.forEach(h => { SPOKES.forEach(s => { if (s._hubs.includes(d.id) && s._hubs.includes(h.id)) conn.add(h.id); }); });
   } else {
     d._hubs.forEach(hid => {
-      connectedIds.add(hid);
-      SPOKES.forEach(s => { if (s.id !== d.id && s._hubs.includes(hid)) connectedIds.add(s.id); });
+      conn.add(hid);
+      SPOKES.forEach(s => { if (s.id !== d.id && s._hubs.includes(hid)) conn.add(s.id); });
     });
   }
-
-  nodeSel.classed('node-dim', nd => !connectedIds.has(nd.id));
-  linkSel.classed('link-dim',   ld =>  !connectedIds.has(ld.s) || !connectedIds.has(ld.t));
-  linkSel.classed('link-active', ld => connectedIds.has(ld.s) && connectedIds.has(ld.t) && (ld.s === d.id || ld.t === d.id));
-
+  nodeSel.classed('node-dim', nd => !conn.has(nd.id));
+  linkSel.classed('link-dim',    ld => !conn.has(ld.s) || !conn.has(ld.t));
+  linkSel.classed('link-active', ld => conn.has(ld.s) && conn.has(ld.t) && (ld.s === d.id || ld.t === d.id));
   document.getElementById('p-tag').textContent  = isHub ? 'Coalition hub' : 'Member organization';
   document.getElementById('p-name').textContent = d.full || d.label;
   document.getElementById('p-desc').textContent = d.desc || '';
-
-  const statsEl = document.getElementById('p-stats');
+  const st = document.getElementById('p-stats');
   if (isHub) {
-    statsEl.innerHTML =
-      `<div class="ps"><span class="ps-v">${d.members}</span><span class="ps-l">members</span></div>` +
-      `<div class="ps"><span class="ps-v">${d.bc.toFixed(3)}</span><span class="ps-l">betweenness</span></div>`;
+    st.innerHTML = `<div class="ps"><span class="ps-v">${d.members}</span><span class="ps-l">members</span></div><div class="ps"><span class="ps-v">${d.bc.toFixed(3)}</span><span class="ps-l">betweenness</span></div>`;
   } else {
-    statsEl.innerHTML =
-      `<div class="ps"><span class="ps-v">${d._hubs.length}</span><span class="ps-l">coalitions</span></div>` +
-      `<div class="ps"><span class="ps-v">${connectedIds.size - 1}</span><span class="ps-l">connections</span></div>`;
+    st.innerHTML = `<div class="ps"><span class="ps-v">${d._hubs.length}</span><span class="ps-l">coalitions</span></div><div class="ps"><span class="ps-v">${conn.size - 1}</span><span class="ps-l">connections</span></div>`;
   }
   panel.classList.add('vis');
 });
 
 svg.on('click', resetAll);
-
 window.addEventListener('resize', () => { layout(); });
+
 </script>
 </body>
 </html>
